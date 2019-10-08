@@ -1,0 +1,84 @@
+{
+  "spec": {
+    "template": {
+      "spec": {
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "ATOMIST_CONFIG_PATH",
+                "value": "/opt/atm/client.config.json"
+              },
+              {
+                "name": "ATOMIST_GOAL_LAUNCHER",
+                "value": "kubernetes"
+              },
+              {
+                "name": "ATOMIST_POD_NAMESPACE",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.namespace"
+                  }
+                }
+              },
+              {
+                "name": "FORCE_COLOR",
+                "value": "1"
+              }
+            ],
+            "livenessProbe": {
+              "failureThreshold": 3,
+              "httpGet": {
+                "path": "/health",
+                "port": "http",
+                "scheme": "HTTP"
+              },
+              "initialDelaySeconds": 20,
+              "periodSeconds": 20,
+              "successThreshold": 1,
+              "timeoutSeconds": 3
+            },
+            "readinessProbe": {
+              "failureThreshold": 3,
+              "httpGet": {
+                "path": "/health",
+                "port": "http",
+                "scheme": "HTTP"
+              },
+              "initialDelaySeconds": 20,
+              "periodSeconds": 20,
+              "successThreshold": 1,
+              "timeoutSeconds": 3
+            },
+            "resources": {
+              "limits": {
+                "cpu": "1000m",
+                "memory": "512Mi"
+              },
+              "requests": {
+                "cpu": "100m",
+                "memory": "384Mi"
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/opt/atm",
+                "name": "atomist-web-sdm",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "serviceAccountName": "atomist-web-sdm",
+        "volumes": [
+          {
+            "name": "atomist-web-sdm",
+            "secret": {
+              "secretName": "atomist-web-sdm"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
