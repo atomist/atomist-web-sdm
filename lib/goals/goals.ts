@@ -15,19 +15,26 @@
  */
 
 import {
+    AutoCodeInspection,
     GoalWithFulfillment,
     Queue,
 } from "@atomist/sdm";
 import {
     Container,
     DeliveryGoals,
+    Tag,
     Version,
 } from "@atomist/sdm-core";
+import {
+    IncrementVersion,
+    Release,
+} from "@atomist/sdm-pack-version";
+import { Fetch } from "@atomist/sdm-pack-web";
 
 /**
  * Interface to capture all goals that this SDM will manage.
  */
-export interface AtomistClientSdmGoals extends DeliveryGoals {
+export interface AtomistWebSdmGoals extends DeliveryGoals {
     /** Manage concurrent tasks using Queue goal. */
     queue: Queue;
     /** Approval gate goal, insert after goals that need manual approval. */
@@ -35,7 +42,29 @@ export interface AtomistClientSdmGoals extends DeliveryGoals {
 
     /** Calculate timestamped prerelease version for goal set. */
     version: Version;
+    /** Create prerelease version Git tag. */
+    tag: Tag;
+    /** Create release version Git tag. */
+    releaseTag: Tag;
+
+    /** Jekyll web site build. */
+    jekyll: Container;
+
+    /** Check HTML of web site. */
+    codeInspection: AutoCodeInspection;
 
     /** Deploy web site using Firebase. */
     firebaseDeploy: Container;
+    /** Deploy staging web site using Firebase. */
+    firebaseStagingDeploy: Container;
+    /** Deploy production web site using Firebase. */
+    firebaseProductionDeploy: Container;
+
+    /** Validiate deployed web site. */
+    fetchStaging: Fetch;
+    fetchProduction: Fetch;
+
+    /** Create release. */
+    release: Release;
+    incrementVersion: IncrementVersion;
 }

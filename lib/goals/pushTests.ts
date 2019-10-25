@@ -15,9 +15,15 @@
  */
 
 import {
+    hasFile,
     pushTest,
     PushTest,
 } from "@atomist/sdm";
+
+/**
+ * Test for Jekyll configuration file in project.
+ */
+export const JekyllPushTest = hasFile("_config.yml");
 
 /**
  * Return a push test that matches the repository owner/repo slug

@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-import { ConfigurationPostProcessor } from "@atomist/automation-client";
 import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import { configureRaven } from "@atomist/automation-client-ext-raven";
 import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm";
 import {
-    CompressingGoalCache,
-    ConfigurationPreProcessor,
-    ConfigureOptions,
+    ConfigureMachineOptions,
     LocalSoftwareDeliveryMachineConfiguration,
 } from "@atomist/sdm-core";
-import { GoogleCloudStorageGoalCacheArchiveStore } from "@atomist/sdm-pack-gcp";
 import * as _ from "lodash";
 
-// Remove once sdm-core gets released
-interface ConfigureMachineOptions extends ConfigureOptions {
-    name?: string;
-    preProcessors?: ConfigurationPreProcessor[];
-    postProcessors?: ConfigurationPostProcessor[];
-}
+/**
+ * Use to workaround name being optional in the configuration when it
+ * reall is not.
+ */
+export const DefaultName = "@atomist/atomist-web-sdm";
 
 /**
  * Provide default SDM configuration. If any other source defines
@@ -51,7 +46,6 @@ async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfigurati
                 bucket: "atm-atomist-sdm-goal-cache-production",
                 enabled: true,
                 path: "atomist-sdm-cache",
-                store: new CompressingGoalCache(new GoogleCloudStorageGoalCacheArchiveStore()),
             },
         },
     };
@@ -66,8 +60,5 @@ export const machineOptions: ConfigureMachineOptions = {
         configureDashboardNotifications,
         configureHumio,
         configureRaven,
-    ],
-    requiredConfigurationValues: [
-        "sdm.firebase.token",
     ],
 };

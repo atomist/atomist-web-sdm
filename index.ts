@@ -17,31 +17,72 @@
 import { ToDefaultBranch } from "@atomist/sdm";
 import {
     configure,
+    githubGoalStatusSupport,
+    goalStateSupport,
     k8sGoalSchedulingSupport,
 } from "@atomist/sdm-core";
-import { machineOptions } from "./lib/configure";
+import { gcpSupport } from "@atomist/sdm-pack-gcp";
+import { issueSupport } from "@atomist/sdm-pack-issue";
+import {
+    DefaultName,
+    machineOptions,
+} from "./lib/configure";
 import { AtomistClientSdmGoalConfigurer } from "./lib/goals/goalConfigurer";
-import { AtomistClientSdmGoalCreator } from "./lib/goals/goalCreator";
-import { AtomistClientSdmGoals } from "./lib/goals/goals";
-import { repoSlugMatches } from "./lib/pushTests/name";
+import { AtomistWebSdmGoalCreator } from "./lib/goals/goalCreator";
+import { AtomistWebSdmGoals } from "./lib/goals/goals";
+import {
+    JekyllPushTest,
+    repoSlugMatches,
+} from "./lib/goals/pushTests";
 
-/**
- * The main entry point into the SDM
- */
-export const configuration = configure<AtomistClientSdmGoals>(async sdm => {
+export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
 
     sdm.addExtensionPacks(
+        gcpSupport(),
+        githubGoalStatusSupport(),
+        goalStateSupport({
+            cancellation: {
+                enabled: true,
+            },
+        }),
+        issueSupport({
+            labelIssuesOnDeployment: true,
+            closeCodeInspectionIssuesOnBranchDeletion: {
+                enabled: true,
+                source: sdm.configuration.name || DefaultName,
+            },
+        }),
         k8sGoalSchedulingSupport(),
     );
 
-    // Create goals and configure them
-    const goals = await sdm.createGoals(AtomistClientSdmGoalCreator, [AtomistClientSdmGoalConfigurer]);
+    const goals = await sdm.createGoals(AtomistWebSdmGoalCreator, [AtomistClientSdmGoalConfigurer]);
 
-    // Return all push rules
     return {
+        jekyll: {
+            test: [JekyllPushTest],
+            goals: [
+                goals.queue,
+                goals.version,
+                goals.jekyll,
+                [goals.codeInspection, goals.tag],
+            ],
+        },
+        jekyllDeploy: {
+            dependsOn: [goals.jekyll],
+            test: [JekyllPushTest, ToDefaultBranch],
+            goals: [
+                [goals.firebaseStagingDeploy],
+                [goals.fetchStaging, goals.approvalGate],
+                [goals.releaseTag, goals.firebaseProductionDeploy],
+                [goals.fetchProduction, goals.release, goals.incrementVersion],
+            ],
+        },
         webStatic: {
             test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],
-            goals: [goals.firebaseDeploy],
+            goals: [
+                goals.queue,
+                goals.firebaseDeploy,
+            ],
         },
     };
 }, machineOptions);

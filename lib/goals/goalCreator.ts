@@ -15,22 +15,32 @@
  */
 
 import {
+    AutoCodeInspection,
     goal,
+    GoalProjectListenerRegistration,
     IndependentOfEnvironment,
+    PushTest,
     Queue,
 } from "@atomist/sdm";
 import {
+    cacheRestore,
     container,
     GoalCreator,
+    Tag,
     Version,
 } from "@atomist/sdm-core";
+import {
+    IncrementVersion,
+    Release,
+} from "@atomist/sdm-pack-version";
+import { Fetch } from "@atomist/sdm-pack-web";
 import * as _ from "lodash";
-import { AtomistClientSdmGoals } from "./goals";
+import { AtomistWebSdmGoals } from "./goals";
 
 /**
  * Create all goal instances and return an instance of HelloWorldGoals
  */
-export const AtomistClientSdmGoalCreator: GoalCreator<AtomistClientSdmGoals> = async sdm => {
+export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async sdm => {
 
     const queue = new Queue({ concurrent: 5 });
     const approvalGate = goal(
@@ -46,21 +56,92 @@ export const AtomistClientSdmGoalCreator: GoalCreator<AtomistClientSdmGoals> = a
         },
         async gi => { /** Intentionally left empty */ });
     const version = new Version();
-    const firebaseToken = _.get(sdm, "configuration.sdm.firebase.token");
-    const firebaseDeploy = container("web-static-deploy", {
+    const tag = new Tag();
+    const releaseTag = new Tag();
+    const jekyll = container("jekyll", {
         containers: [
             {
-                args: ["firebase", "deploy", "--token", firebaseToken],
-                image: "andreysenov/firebase-tools:7.4.0",
+                args: ["jekyll", "build"],
+                image: "jekyll/jekyll:3.8.4",
+                name: "jekyll",
+            },
+        ],
+        output: [{
+            classifier: "site",
+            pattern: { directory: "_site" },
+        }],
+    });
+    /*
+    const htmltest = container("htmltest", {
+        containers: [
+            {
+                args: ["/bin/sh", "-c", "[ -f .htmltest.yml ] || exit 0; apk update && apk add ca-certificates && htmltest"],
+                image: "wjdp/htmltest:v0.10.3",
+                name: "htmltest",
+            },
+        ],
+        input: ["site"],
+    });
+    */
+    const codeInspection = new AutoCodeInspection({ isolate: true });
+    const firebaseToken: string = _.get(sdm, "configuration.sdm.firebase.token");
+    const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
+    const firebaseImage = "andreysenov/firebase-tools:7.4.0";
+    const firebaseDeploy = container("firebase-deploy", {
+        containers: [
+            {
+                args: ["firebase", "--non-interactive", "deploy", ...firebaseTokenArgs],
+                image: firebaseImage,
                 name: "firebase",
             },
         ],
     });
+    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
+        `firebase-${env}-deploy`,
+        {
+            containers: [
+                {
+                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
+                    image: firebaseImage,
+                    name: "firebase",
+                },
+            ],
+            input: ["site"],
+        },
+    ));
+    const fetchStaging = new Fetch();
+    const fetchProduction = new Fetch();
+    const release = new Release();
+    const incrementVersion = new IncrementVersion();
 
     return {
         queue,
         approvalGate,
         version,
+        tag,
+        releaseTag,
+        jekyll,
+        codeInspection,
         firebaseDeploy,
+        firebaseStagingDeploy,
+        firebaseProductionDeploy,
+        fetchStaging,
+        fetchProduction,
+        release,
+        incrementVersion,
     };
 };
+
+/**
+ * Restore the cache classifier "site" and throw an error if it fails.
+ */
+export function siteCacheRestore(pushTest?: PushTest): GoalProjectListenerRegistration {
+    return cacheRestore({
+        entries: [{ classifier: "site" }],
+        onCacheMiss: {
+            name: "fail-if-cache-restore-fails",
+            listener: () => { throw new Error("Failed to restore site cache"); },
+        },
+        pushTest,
+    });
+}
