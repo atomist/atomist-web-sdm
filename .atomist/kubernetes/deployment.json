@@ -24,6 +24,10 @@
               {
                 "name": "FORCE_COLOR",
                 "value": "1"
+              },
+              {
+                "name": "GOOGLE_APPLICATION_CREDENTIALS",
+                "value": "/opt/gcs/credentials.json"
               }
             ],
             "livenessProbe": {
@@ -65,6 +69,11 @@
                 "mountPath": "/opt/atm",
                 "name": "atomist-web-sdm",
                 "readOnly": true
+              },
+              {
+                "mountPath": "/opt/gcs",
+                "name": "gcs-credentials",
+                "readOnly": true
               }
             ]
           }
@@ -75,6 +84,12 @@
             "name": "atomist-web-sdm",
             "secret": {
               "secretName": "atomist-web-sdm"
+            }
+          },
+          {
+            "name": "gcs-credentials",
+            "secret": {
+              "secretName": "gcs-credentials"
             }
           }
         ]
