@@ -71,7 +71,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             pattern: { directory: "_site" },
         }],
     });
-    /*
+    const codeInspection = new AutoCodeInspection({ isolate: true });
     const htmltest = container("htmltest", {
         containers: [
             {
@@ -82,8 +82,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         ],
         input: ["site"],
     });
-    */
-    const codeInspection = new AutoCodeInspection({ isolate: true });
     const firebaseToken: string = _.get(sdm, "configuration.sdm.firebase.token");
     const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:7.4.0";
@@ -122,6 +120,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         releaseTag,
         jekyll,
         codeInspection,
+        htmltest,
         firebaseDeploy,
         firebaseStagingDeploy,
         firebaseProductionDeploy,

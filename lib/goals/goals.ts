@@ -52,6 +52,8 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
 
     /** Check HTML of web site. */
     codeInspection: AutoCodeInspection;
+    /** Run htmltest on web site. */
+    htmltest: Container;
 
     /** Deploy web site using Firebase. */
     firebaseDeploy: Container;

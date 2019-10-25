@@ -64,11 +64,11 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
                 goals.queue,
                 goals.version,
                 goals.jekyll,
-                [goals.codeInspection, goals.tag],
+                [goals.codeInspection, goals.htmltest, goals.tag],
             ],
         },
         jekyllDeploy: {
-            dependsOn: [goals.jekyll],
+            dependsOn: [goals.htmltest],
             test: [JekyllPushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
