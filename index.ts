@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ToDefaultBranch } from "@atomist/sdm";
+import {
+    ImmaterialGoals,
+    ToDefaultBranch,
+} from "@atomist/sdm";
 import {
     configure,
     githubGoalStatusSupport,
@@ -23,6 +26,7 @@ import {
 } from "@atomist/sdm-core";
 import { gcpSupport } from "@atomist/sdm-pack-gcp";
 import { issueSupport } from "@atomist/sdm-pack-issue";
+import { IsReleaseCommit } from "@atomist/sdm-pack-version";
 import {
     DefaultName,
     machineOptions,
@@ -58,6 +62,10 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
     const goals = await sdm.createGoals(AtomistWebSdmGoalCreator, [AtomistClientSdmGoalConfigurer]);
 
     return {
+        immaterial: {
+            test: [IsReleaseCommit],
+            goals: ImmaterialGoals.andLock(),
+        },
         jekyll: {
             test: [JekyllPushTest],
             goals: [
