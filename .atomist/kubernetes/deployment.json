@@ -10,7 +10,7 @@
                 "value": "/opt/atm/client.config.json"
               },
               {
-                "name": "ATOMIST_GOAL_LAUNCHER",
+                "name": "ATOMIST_GOAL_SCHEDULER",
                 "value": "kubernetes"
               },
               {
@@ -28,31 +28,23 @@
               {
                 "name": "GOOGLE_APPLICATION_CREDENTIALS",
                 "value": "/opt/gcs/credentials.json"
+              },
+              {
+                "name": "TMPDIR",
+                "value": "/tmp"
               }
             ],
             "livenessProbe": {
-              "failureThreshold": 3,
               "httpGet": {
-                "path": "/health",
-                "port": "http",
-                "scheme": "HTTP"
+                "path": "/health"
               },
-              "initialDelaySeconds": 20,
-              "periodSeconds": 20,
-              "successThreshold": 1,
-              "timeoutSeconds": 3
+              "initialDelaySeconds": 20
             },
             "readinessProbe": {
-              "failureThreshold": 3,
               "httpGet": {
-                "path": "/health",
-                "port": "http",
-                "scheme": "HTTP"
+                "path": "/health"
               },
-              "initialDelaySeconds": 20,
-              "periodSeconds": 20,
-              "successThreshold": 1,
-              "timeoutSeconds": 3
+              "initialDelaySeconds": 20
             },
             "resources": {
               "limits": {
@@ -64,7 +56,16 @@
                 "memory": "384Mi"
               }
             },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "privileged": false,
+              "readOnlyRootFilesystem": true
+            },
             "volumeMounts": [
+              {
+                "mountPath": "/home/atomist",
+                "name": "home"
+              },
               {
                 "mountPath": "/opt/atm",
                 "name": "atomist-web-sdm",
@@ -74,23 +75,66 @@
                 "mountPath": "/opt/gcs",
                 "name": "gcs-credentials",
                 "readOnly": true
+              },
+              {
+                "mountPath": "/tmp",
+                "name": "tmp"
               }
             ]
           }
         ],
+        "initContainers": [
+          {
+            "args": [
+              "git config --global user.email 'bot@atomist.com' && git config --global user.name 'Atomist Bot'"
+            ],
+            "command": ["/bin/sh", "-c"],
+            "image": "atomist/sdm-base:0.3.0",
+            "name": "home",
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "privileged": false,
+              "readOnlyRootFilesystem": true
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/home/atomist",
+                "name": "home"
+              }
+            ]
+          }
+        ],
+        "securityContext": {
+          "fsGroup": 2866,
+          "runAsGroup": 2866,
+          "runAsNonRoot": true,
+          "runAsUser": 2866,
+          "supplementalGroups": [],
+          "sysctls": []
+        },
         "serviceAccountName": "atomist-web-sdm",
         "volumes": [
           {
             "name": "atomist-web-sdm",
             "secret": {
+              "defaultMode": 288,
               "secretName": "atomist-web-sdm"
             }
           },
           {
             "name": "gcs-credentials",
             "secret": {
+              "defaultMode": 288,
               "secretName": "gcs-credentials"
             }
+          },
+          {
+            "emptyDir": {},
+            "name": "home"
+          },
+          {
+            "emptyDir": {},
+            "name": "tmp"
           }
         ]
       }
