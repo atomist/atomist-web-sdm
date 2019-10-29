@@ -51,13 +51,13 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`@atomist/automation-client-ext-dashboard`|`1.1.0`|Atomist|[https://github.com/atomist/automation-client-ext-dashboard](https://github.com/atomist/automation-client-ext-dashboard)|
 |`@atomist/automation-client-ext-humio`|`0.2.1`|Atomist|[https://github.com/atomist/automation-client-ext-humio](https://github.com/atomist/automation-client-ext-humio)|
 |`@atomist/automation-client-ext-raven`|`1.0.3`|Atomist|[https://github.com/atomist/automation-client-ext-raven](https://github.com/atomist/automation-client-ext-raven)|
-|`@atomist/sdm-core`|`1.8.0-progress-log-close-206.20191029163736`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
+|`@atomist/sdm-core`|`1.8.0-progress-log-close-206.20191029191358`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
 |`@atomist/sdm-pack-build`|`1.0.6`|Atomist|[https://github.com/atomist/sdm-pack-build](https://github.com/atomist/sdm-pack-build)|
 |`@atomist/sdm-pack-gcp`|`0.1.0-master.20191018215140`|Atomist|[https://github.com/atomist/sdm-pack-gcp](https://github.com/atomist/sdm-pack-gcp)|
 |`@atomist/sdm-pack-issue`|`1.2.2`|Atomist|[https://github.com/atomist/sdm-pack-issue](https://github.com/atomist/sdm-pack-issue)|
 |`@atomist/sdm-pack-version`|`0.1.1-master.20191025140156`|Atomist|[https://github.com/atomist/sdm-pack-version](https://github.com/atomist/sdm-pack-version)|
 |`@atomist/sdm-pack-web`|`0.1.0`|David Dooling|[https://github.com/atomist/sdm-pack-web](https://github.com/atomist/sdm-pack-web)|
-|`@atomist/sdm`|`1.8.0-master.20191011130951`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
+|`@atomist/sdm`|`1.8.0-execute-goal-result.20191029193519`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
 |`@atomist/slack-messages`|`1.1.1`|Atomist|[https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)|
 |`@google-cloud/common`|`2.2.3`|Google Inc.|[https://github.com/googleapis/nodejs-common](https://github.com/googleapis/nodejs-common)|
 |`@google-cloud/paginator`|`2.0.1`|Google Inc.|[https://github.com/googleapis/nodejs-paginator](https://github.com/googleapis/nodejs-paginator)|
@@ -868,7 +868,7 @@ MIT License - [https://opensource.org/licenses/MIT](https://opensource.org/licen
 |`serialize-error`|`3.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/serialize-error](https://github.com/sindresorhus/serialize-error)|
 |`serialize-error`|`5.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/serialize-error](https://github.com/sindresorhus/serialize-error)|
 |`serve-static`|`1.14.1`|Douglas Christopher Wilson|[https://github.com/expressjs/serve-static](https://github.com/expressjs/serve-static)|
-|`sha-regex`|`1.0.7`|Nikolaos Kamarinakis|[https://github.com/k4m4/sha-regex](https://github.com/k4m4/sha-regex)|
+|`sha-regex`|`1.0.8`|Nikolaos Kamarinakis|[https://github.com/k4m4/sha-regex](https://github.com/k4m4/sha-regex)|
 |`shebang-command`|`1.2.0`|Kevin Martensson|[https://github.com/kevva/shebang-command](https://github.com/kevva/shebang-command)|
 |`shebang-regex`|`1.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/shebang-regex](https://github.com/sindresorhus/shebang-regex)|
 |`simple-swizzle`|`0.2.2`|Qix|[https://github.com/qix-/node-simple-swizzle](https://github.com/qix-/node-simple-swizzle)|
