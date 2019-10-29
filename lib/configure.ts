@@ -45,7 +45,7 @@ async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfigurati
             cache: {
                 bucket: "atm-atomist-sdm-goal-cache-production",
                 enabled: true,
-                path: "atomist-sdm-cache",
+                path: "atomist-web-sdm-cache",
             },
         },
     };
