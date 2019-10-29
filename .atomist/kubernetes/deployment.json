@@ -56,7 +56,7 @@
             "volumeMounts": [
               {
                 "mountPath": "/home/atomist",
-                "name": "home"
+                "name": "atomist-home"
               },
               {
                 "mountPath": "/opt/atm",
@@ -70,7 +70,7 @@
               },
               {
                 "mountPath": "/tmp",
-                "name": "tmp"
+                "name": "sdm-tmp"
               }
             ]
           }
@@ -82,7 +82,7 @@
             ],
             "command": ["/bin/sh", "-c"],
             "image": "atomist/sdm-base:0.3.0",
-            "name": "home",
+            "name": "atomist-home-git",
             "securityContext": {
               "allowPrivilegeEscalation": false,
               "privileged": false,
@@ -91,7 +91,7 @@
             "volumeMounts": [
               {
                 "mountPath": "/home/atomist",
-                "name": "home"
+                "name": "atomist-home"
               }
             ]
           }
@@ -121,11 +121,11 @@
           },
           {
             "emptyDir": {},
-            "name": "home"
+            "name": "atomist-home"
           },
           {
             "emptyDir": {},
-            "name": "tmp"
+            "name": "sdm-tmp"
           }
         ]
       }
