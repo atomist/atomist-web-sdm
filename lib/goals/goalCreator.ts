@@ -83,6 +83,12 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["/bin/sh", "-c", "[ -f .htmltest.yml ] || exit 0; apk update && apk add ca-certificates && htmltest"],
                 image: "wjdp/htmltest:v0.10.3",
                 name: "htmltest",
+                securityContext: {
+                    readOnlyRootFilesystem: false,
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
             },
         ],
         input: ["site"],
