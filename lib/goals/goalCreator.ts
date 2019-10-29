@@ -64,6 +64,11 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["jekyll", "build"],
                 image: "jekyll/jekyll:3.8.4",
                 name: "jekyll",
+                securityContext: {
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
             },
         ],
         output: [{
