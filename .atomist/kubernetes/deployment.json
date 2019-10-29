@@ -14,14 +14,6 @@
                 "value": "kubernetes"
               },
               {
-                "name": "ATOMIST_POD_NAMESPACE",
-                "valueFrom": {
-                  "fieldRef": {
-                    "fieldPath": "metadata.namespace"
-                  }
-                }
-              },
-              {
                 "name": "FORCE_COLOR",
                 "value": "1"
               },
@@ -112,7 +104,6 @@
           "supplementalGroups": [],
           "sysctls": []
         },
-        "serviceAccountName": "atomist-web-sdm",
         "volumes": [
           {
             "name": "atomist-web-sdm",
