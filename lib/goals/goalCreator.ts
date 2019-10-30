@@ -84,7 +84,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 image: "wjdp/htmltest:v0.10.3",
                 name: "htmltest",
                 securityContext: {
-                    readOnlyRootFilesystem: false,
                     runAsGroup: 0,
                     runAsNonRoot: false,
                     runAsUser: 0,
@@ -103,7 +102,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 image: firebaseImage,
                 name: "firebase",
                 securityContext: {
-                    readOnlyRootFilesystem: false,
+                    runAsGroup: 1000,
+                    runAsUser: 1000,
                 },
             },
         ],
@@ -117,7 +117,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     image: firebaseImage,
                     name: "firebase",
                     securityContext: {
-                        readOnlyRootFilesystem: false,
+                        runAsGroup: 1000,
+                        runAsUser: 1000,
                     },
                 },
             ],
