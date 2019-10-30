@@ -102,6 +102,9 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["firebase", "--non-interactive", "deploy", ...firebaseTokenArgs],
                 image: firebaseImage,
                 name: "firebase",
+                securityContext: {
+                    readOnlyRootFilesystem: false,
+                },
             },
         ],
     });
@@ -113,6 +116,9 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
                     image: firebaseImage,
                     name: "firebase",
+                    securityContext: {
+                        readOnlyRootFilesystem: false,
+                    },
                 },
             ],
             input: ["site"],
