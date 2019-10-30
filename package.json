@@ -29,12 +29,12 @@
     "@atomist/automation-client-ext-humio": "^0.2.1",
     "@atomist/automation-client-ext-raven": "^1.0.3",
     "@atomist/sdm": "^1.8.0-execute-goal-result.20191029193519",
-    "@atomist/sdm-core": "^1.8.0-progress-log-close-206.20191029220239",
+    "@atomist/sdm-core": "^1.8.0-progress-log-close-206.20191030142114",
     "@atomist/sdm-pack-build": "^1.0.6",
     "@atomist/sdm-pack-gcp": "0.1.0-master.20191030133626",
     "@atomist/sdm-pack-issue": "^1.2.2",
     "@atomist/sdm-pack-version": "^0.1.1-master.20191025140156",
-    "@atomist/sdm-pack-web": "^0.1.0",
+    "@atomist/sdm-pack-web": "^0.1.1-master.20191030144357",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
