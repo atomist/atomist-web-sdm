@@ -31,7 +31,7 @@
     "@atomist/sdm": "^1.8.0-execute-goal-result.20191029193519",
     "@atomist/sdm-core": "^1.8.0-progress-log-close-206.20191029220239",
     "@atomist/sdm-pack-build": "^1.0.6",
-    "@atomist/sdm-pack-gcp": "0.1.0-master.20191018215140",
+    "@atomist/sdm-pack-gcp": "0.1.0-master.20191030133626",
     "@atomist/sdm-pack-issue": "^1.2.2",
     "@atomist/sdm-pack-version": "^0.1.1-master.20191025140156",
     "@atomist/sdm-pack-web": "^0.1.0",
