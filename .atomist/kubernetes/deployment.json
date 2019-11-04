@@ -102,6 +102,9 @@
             ]
           }
         ],
+        "securityContext": {
+          "fsGroup": 2866
+        },
         "volumes": [
           {
             "name": "atomist-web-sdm",
