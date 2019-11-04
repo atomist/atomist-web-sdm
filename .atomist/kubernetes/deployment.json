@@ -51,7 +51,10 @@
             "securityContext": {
               "allowPrivilegeEscalation": false,
               "privileged": false,
-              "readOnlyRootFilesystem": true
+              "readOnlyRootFilesystem": true,
+              "runAsGroup": 2866,
+              "runAsNonRoot": true,
+              "runAsUser": 2866
             },
             "volumeMounts": [
               {
@@ -86,7 +89,10 @@
             "securityContext": {
               "allowPrivilegeEscalation": false,
               "privileged": false,
-              "readOnlyRootFilesystem": true
+              "readOnlyRootFilesystem": true,
+              "runAsGroup": 2866,
+              "runAsNonRoot": true,
+              "runAsUser": 2866
             },
             "volumeMounts": [
               {
@@ -96,14 +102,6 @@
             ]
           }
         ],
-        "securityContext": {
-          "fsGroup": 2866,
-          "runAsGroup": 2866,
-          "runAsNonRoot": true,
-          "runAsUser": 2866,
-          "supplementalGroups": [],
-          "sysctls": []
-        },
         "volumes": [
           {
             "name": "atomist-web-sdm",
