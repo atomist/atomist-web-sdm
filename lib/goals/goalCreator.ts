@@ -34,7 +34,6 @@ import {
     Release,
 } from "@atomist/sdm-pack-version";
 import { Fetch } from "@atomist/sdm-pack-web";
-import * as _ from "lodash";
 import { AtomistWebSdmGoals } from "./goals";
 
 /**
@@ -82,7 +81,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         ],
         input: ["site"],
     });
-    const firebaseToken: string = _.get(sdm, "configuration.sdm.firebase.token");
+    // tslint:disable-next-line:whitespace
+    const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
     const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:7.4.0";
     const firebaseDeploy = container("firebase-deploy", {
