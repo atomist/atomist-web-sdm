@@ -64,11 +64,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["jekyll", "build"],
                 image: "jekyll/jekyll:3.8.4",
                 name: "jekyll",
-                securityContext: {
-                    runAsGroup: 0,
-                    runAsNonRoot: false,
-                    runAsUser: 0,
-                },
             },
         ],
         output: [{
@@ -83,11 +78,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["/bin/sh", "-c", "[ -f .htmltest.yml ] || exit 0; apk update && apk add ca-certificates && htmltest"],
                 image: "wjdp/htmltest:v0.10.3",
                 name: "htmltest",
-                securityContext: {
-                    runAsGroup: 0,
-                    runAsNonRoot: false,
-                    runAsUser: 0,
-                },
             },
         ],
         input: ["site"],
@@ -101,10 +91,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 args: ["firebase", "--non-interactive", "deploy", ...firebaseTokenArgs],
                 image: firebaseImage,
                 name: "firebase",
-                securityContext: {
-                    runAsGroup: 1000,
-                    runAsUser: 1000,
-                },
             },
         ],
     });
@@ -116,10 +102,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
                     image: firebaseImage,
                     name: "firebase",
-                    securityContext: {
-                        runAsGroup: 1000,
-                        runAsUser: 1000,
-                    },
                 },
             ],
             input: ["site"],
