@@ -33,6 +33,6 @@ export const JekyllPushTest = hasFile("_config.yml");
  * @return Push test performing the match
  */
 export function repoSlugMatches(re: RegExp): PushTest {
-    return pushTest(`Project owner/name slug matches regular expression ${RegExp.toString()}`,
+    return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`,
         async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
 }
