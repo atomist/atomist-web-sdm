@@ -26,6 +26,11 @@ import {
 export const JekyllPushTest = hasFile("_config.yml");
 
 /**
+ * Test for webpack configuration file in project.
+ */
+export const WebPackPushTest = hasFile("webpack.config.js");
+
+/**
  * Return a push test that matches the repository owner/repo slug
  * against regular expression.
  *

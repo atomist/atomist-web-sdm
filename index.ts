@@ -31,13 +31,14 @@ import {
     DefaultName,
     machineOptions,
 } from "./lib/configure";
-import { AtomistClientSdmGoalConfigurer } from "./lib/goals/goalConfigurer";
-import { AtomistWebSdmGoalCreator } from "./lib/goals/goalCreator";
-import { AtomistWebSdmGoals } from "./lib/goals/goals";
+import { AtomistWebSdmGoals } from "./lib/goal";
+import { AtomistClientSdmGoalConfigurer } from "./lib/goalConfigurer";
+import { AtomistWebSdmGoalCreator } from "./lib/goalCreator";
 import {
     JekyllPushTest,
     repoSlugMatches,
-} from "./lib/goals/pushTests";
+    WebPackPushTest,
+} from "./lib/pushTest";
 
 export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
 
@@ -72,15 +73,38 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
                 goals.queue,
                 goals.version,
                 goals.jekyll,
-                [goals.codeInspection, goals.htmltest, goals.tag],
+                [goals.codeInspection, goals.htmltest],
+                goals.tag,
             ],
         },
         jekyllDeploy: {
-            dependsOn: [goals.htmltest],
+            dependsOn: [goals.tag],
             test: [JekyllPushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.approvalGate],
+                [goals.releaseTag, goals.firebaseProductionDeploy],
+                [goals.fetchProduction, goals.release, goals.incrementVersion],
+            ],
+        },
+        webpack: {
+            test: [WebPackPushTest],
+            goals: [
+                goals.queue,
+                goals.version,
+                goals.webpack,
+                [goals.codeInspection, goals.htmltest],
+                goals.tag,
+            ],
+        },
+        webpackDeploy: {
+            dependsOn: [goals.tag],
+            test: [WebPackPushTest, ToDefaultBranch],
+            goals: [
+                [goals.firebaseStagingDeploy],
+                [goals.fetchStaging, goals.approvalGate],
+                [goals.firebaseTestingDeploy],
+                [goals.fetchTesting, goals.approvalGate],
                 [goals.releaseTag, goals.firebaseProductionDeploy],
                 [goals.fetchProduction, goals.release, goals.incrementVersion],
             ],

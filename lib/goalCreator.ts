@@ -34,7 +34,7 @@ import {
     Release,
 } from "@atomist/sdm-pack-version";
 import { Fetch } from "@atomist/sdm-pack-web";
-import { AtomistWebSdmGoals } from "./goals";
+import { AtomistWebSdmGoals } from "./goal";
 
 /**
  * Create all goal instances and return an instance of HelloWorldGoals
@@ -70,6 +70,35 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             pattern: { directory: "_site" },
         }],
     });
+    const webpack = container("webpack", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm ci --progress=false && npm run --if-present compile && npm test"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "node:12.13.0",
+                name: "webpack",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "2560Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "2048Mi",
+                    },
+                },
+                securityContext: {
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        output: [{
+            classifier: "site",
+            pattern: { directory: "public" },
+        }],
+    });
     const codeInspection = new AutoCodeInspection({ isolate: true });
     const htmltest = container("htmltest", {
         containers: [
@@ -81,7 +110,6 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         ],
         input: ["site"],
     });
-    // tslint:disable-next-line:whitespace
     const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
     const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:7.4.0";
@@ -94,7 +122,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
         ],
     });
-    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
+    const [firebaseStagingDeploy, firebaseTestingDeploy, firebaseProductionDeploy] = ["staging", "testing", "production"].map(env => container(
         `firebase-${env}-deploy`,
         {
             containers: [
@@ -108,6 +136,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         },
     ));
     const fetchStaging = new Fetch();
+    const fetchTesting = new Fetch();
     const fetchProduction = new Fetch();
     const release = new Release();
     const incrementVersion = new IncrementVersion();
@@ -119,12 +148,15 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         tag,
         releaseTag,
         jekyll,
+        webpack,
         codeInspection,
         htmltest,
         firebaseDeploy,
         firebaseStagingDeploy,
+        firebaseTestingDeploy,
         firebaseProductionDeploy,
         fetchStaging,
+        fetchTesting,
         fetchProduction,
         release,
         incrementVersion,

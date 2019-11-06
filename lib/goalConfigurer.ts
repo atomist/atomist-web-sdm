@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
+import { or } from "@atomist/sdm";
 import {
     executeTag,
     GoalConfigurer,
 } from "@atomist/sdm-core";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
+import {
+    NpmVersionerRegistration,
+    NpmVersionIncrementerRegistration,
+    TslintAutoInspectRegistration,
+} from "@atomist/sdm-pack-node";
 import {
     FileVersionerRegistration,
     FileVersionIncrementerRegistration,
@@ -28,37 +34,58 @@ import {
     runHtmlValidator,
     SiteLocationToSourceLocation,
 } from "@atomist/sdm-pack-web";
-import { DefaultName } from "../configure";
+import { DefaultName } from "./configure";
+import { AtomistWebSdmGoals } from "./goal";
 import { siteCacheRestore } from "./goalCreator";
-import { AtomistWebSdmGoals } from "./goals";
 import {
     JekyllPushTest,
     repoSlugMatches,
-} from "./pushTests";
+    WebPackPushTest,
+} from "./pushTest";
 
 /**
  * Configure the SDM and add fulfillments or listeners to the created goals.
  */
 export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> = async (sdm, goals) => {
     goals.version
-        .with(FileVersionerRegistration);
+        .with(FileVersionerRegistration)
+        .with(NpmVersionerRegistration);
     goals.codeInspection
         .with({
             name: "JekyllHtmlValidator",
             inspection: runHtmlValidator({ sitePath: "_site", siteToSource: jekyllSiteToSource() }),
             pushTest: JekyllPushTest,
         })
-        .withProjectListener(siteCacheRestore(JekyllPushTest))
+        .with({
+            name: "WebpackHtmlValidator",
+            inspection: runHtmlValidator({ sitePath: "public" }),
+            pushTest: WebPackPushTest,
+        })
+        .with(TslintAutoInspectRegistration)
+        .withProjectListener(siteCacheRestore(or(JekyllPushTest, WebPackPushTest)))
         .withListener(singleIssuePerCategoryManaging(sdm.configuration.name || DefaultName, false));
     goals.fetchStaging
         .with({
             url: "https://atomist.services/",
             pushTest: repoSlugMatches(/^atomisthq\/web-site$/),
+        })
+        .with({
+            url: "https://app.atomist.services/",
+            pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
+        });
+    goals.fetchTesting
+        .with({
+            url: "https://test.atomist.com/",
+            pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
         });
     goals.fetchProduction
         .with({
             url: "https://atomist.com/",
             pushTest: repoSlugMatches(/^atomisthq\/web-site$/),
+        })
+        .with({
+            url: "https://app.atomist.com/",
+            pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
         });
     goals.releaseTag
         .with({
@@ -68,7 +95,8 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
     goals.release
         .with(GitHubReleaseRegistration);
     goals.incrementVersion
-        .with(FileVersionIncrementerRegistration);
+        .with(FileVersionIncrementerRegistration)
+        .with(NpmVersionIncrementerRegistration);
 };
 
 /**
@@ -87,9 +115,6 @@ function jekyllSiteToSource(src: string = ""): SiteLocationToSourceLocation {
         return {
             ...s,
             path: srcPath,
-            offset: 0,
-            lineFrom1: 1,
-            columnFrom1: 1,
         };
     };
 }

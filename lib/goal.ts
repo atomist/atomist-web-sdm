@@ -49,6 +49,8 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
 
     /** Jekyll web site build. */
     jekyll: Container;
+    /** NPM webpack web site build. */
+    webpack: Container;
 
     /** Check HTML of web site. */
     codeInspection: AutoCodeInspection;
@@ -59,11 +61,14 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     firebaseDeploy: Container;
     /** Deploy staging web site using Firebase. */
     firebaseStagingDeploy: Container;
+    /** Deploy testing web site using Firebase. */
+    firebaseTestingDeploy: Container;
     /** Deploy production web site using Firebase. */
     firebaseProductionDeploy: Container;
 
     /** Validiate deployed web site. */
     fetchStaging: Fetch;
+    fetchTesting: Fetch;
     fetchProduction: Fetch;
 
     /** Create release. */
