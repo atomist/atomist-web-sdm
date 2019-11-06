@@ -11,4 +11,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Empty SDM.
+-   Static web site delivery. [687cbd5](https://github.com/atomist/atomist-web-sdm/commit/687cbd5ee6bde36a80acaec88e5d2dd4f00e8ed2)
+-   Jekyll web site delivery. [94f94fa](https://github.com/atomist/atomist-web-sdm/commit/94f94fa26b162c85fae31c2bf0289613ee942226)
