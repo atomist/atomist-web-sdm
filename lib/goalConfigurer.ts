@@ -102,8 +102,10 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
 /**
  * There is no consistent way to map location in a HTML file to its
  * Jekyll source, which may be Markdown.
+ *
+ * @param src Path relative to root of directory where Jekyll source files are found, provided path should include trailing '/'
  */
-function jekyllSiteToSource(src: string = ""): SiteLocationToSourceLocation {
+export function jekyllSiteToSource(src: string = ""): SiteLocationToSourceLocation {
     return async (s, p) => {
         let srcPath = s.path.replace(/^_site\//, src);
         if (!await p.hasFile(srcPath) && srcPath.endsWith(".html")) {
