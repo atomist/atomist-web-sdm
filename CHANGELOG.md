@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/atomist-web-sdm/compare/0.1.0...HEAD)
 
+### Added
+
+-   Implement webpack delivery. [90eee5f](https://github.com/atomist/atomist-web-sdm/commit/90eee5f8a1d4c3d52cc32ad984043eca565ba5a9)
+
 ## [0.1.0](https://github.com/atomist/atomist-web-sdm/tree/0.1.0) - 2019-11-06
 
 ### Added
