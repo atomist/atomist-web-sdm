@@ -94,6 +94,18 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
+        initContainers: [
+            {
+                args: ["sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
         output: [{
             classifier: "site",
             pattern: { directory: "public" },
