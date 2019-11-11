@@ -57,7 +57,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`@atomist/sdm-pack-build`|`1.0.6`|Atomist|[https://github.com/atomist/sdm-pack-build](https://github.com/atomist/sdm-pack-build)|
 |`@atomist/sdm-pack-gcp`|`0.1.0-master.20191030133626`|Atomist|[https://github.com/atomist/sdm-pack-gcp](https://github.com/atomist/sdm-pack-gcp)|
 |`@atomist/sdm-pack-issue`|`1.2.2`|Atomist|[https://github.com/atomist/sdm-pack-issue](https://github.com/atomist/sdm-pack-issue)|
-|`@atomist/sdm-pack-node`|`1.2.0-master.20191106224427`|Atomist|[https://github.com/atomist/sdm-pack-node](https://github.com/atomist/sdm-pack-node)|
+|`@atomist/sdm-pack-node`|`1.2.0-master.20191111164040`|Atomist|[https://github.com/atomist/sdm-pack-node](https://github.com/atomist/sdm-pack-node)|
 |`@atomist/sdm-pack-version`|`0.1.1`|Atomist|[https://github.com/atomist/sdm-pack-version](https://github.com/atomist/sdm-pack-version)|
 |`@atomist/sdm-pack-web`|`0.1.1-master.20191030144357`|David Dooling|[https://github.com/atomist/sdm-pack-web](https://github.com/atomist/sdm-pack-web)|
 |`@atomist/sdm`|`1.8.0-dynamic-goals.20191109122945`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
