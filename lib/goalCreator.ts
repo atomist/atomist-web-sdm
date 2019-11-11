@@ -44,16 +44,16 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
     const queue = new Queue({ concurrent: 5 });
     const approvalGate = goal(
         {
-            displayName: "approval",
-            environment: IndependentOfEnvironment,
-            preApproval: true,
+            approval: true,
             descriptions: {
                 planned: "Approval pending",
-                waitingForPreApproval: "Approval pending",
+                waitingForApproval: "Waiting for approval",
                 completed: "Approved",
             },
+            displayName: "approval",
+            environment: IndependentOfEnvironment,
         },
-        async gi => { /** Intentionally left empty */ });
+        async gi => { /* Intentionally left empty */ });
     const version = new Version();
     const tag = new Tag();
     const releaseTag = new Tag();
