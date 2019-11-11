@@ -16,6 +16,7 @@
 
 import {
     AutoCodeInspection,
+    Autofix,
     goal,
     GoalProjectListenerRegistration,
     IndependentOfEnvironment,
@@ -54,6 +55,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             environment: IndependentOfEnvironment,
         },
         async gi => { /* Intentionally left empty */ });
+    const autofix = new Autofix();
     const version = new Version();
     const tag = new Tag();
     const releaseTag = new Tag();
@@ -106,10 +108,16 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
-        output: [{
-            classifier: "site",
-            pattern: { directory: "public" },
-        }],
+        output: [
+            {
+                classifier: "node_modules",
+                pattern: { directory: "node_modules" },
+            },
+            {
+                classifier: "site",
+                pattern: { directory: "public" },
+            },
+        ],
     });
     const codeInspection = new AutoCodeInspection({ isolate: true });
     const htmltest = container("htmltest", {
@@ -156,6 +164,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
     return {
         queue,
         approvalGate,
+        autofix,
         version,
         tag,
         releaseTag,
@@ -178,9 +187,9 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
 /**
  * Restore the cache classifier "site" and throw an error if it fails.
  */
-export function siteCacheRestore(pushTest?: PushTest): GoalProjectListenerRegistration {
+export function cacheClassifierRestore(classifier: string, pushTest?: PushTest): GoalProjectListenerRegistration {
     return cacheRestore({
-        entries: [{ classifier: "site" }],
+        entries: [{ classifier }],
         onCacheMiss: {
             name: "fail-if-cache-restore-fails",
             listener: () => { throw new Error("Failed to restore site cache"); },

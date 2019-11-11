@@ -16,6 +16,7 @@
 
 import {
     AutoCodeInspection,
+    Autofix,
     FulfillableGoal,
     GoalWithFulfillment,
     Queue,
@@ -40,6 +41,8 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     /** Approval gate goal, insert after goals that need manual approval. */
     approvalGate: GoalWithFulfillment;
 
+    /** Autofixes */
+    autofix: Autofix;
     /** Calculate timestamped prerelease version for goal set. */
     version: Version;
     /** Create prerelease version Git tag. */

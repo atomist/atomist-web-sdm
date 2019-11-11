@@ -21,9 +21,14 @@ import {
 } from "@atomist/sdm-core";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
+    npmAuditAutofix,
+    npmAuditInspection,
     NpmVersionerRegistration,
     NpmVersionIncrementerRegistration,
+    PackageLockUrlRewriteAutofix,
+    TslintAutofix,
     TslintAutoInspectRegistration,
+    TypeScriptImportsAutofix,
 } from "@atomist/sdm-pack-node";
 import {
     FileVersionerRegistration,
@@ -36,7 +41,7 @@ import {
 } from "@atomist/sdm-pack-web";
 import { DefaultName } from "./configure";
 import { AtomistWebSdmGoals } from "./goal";
-import { siteCacheRestore } from "./goalCreator";
+import { cacheClassifierRestore } from "./goalCreator";
 import {
     JekyllPushTest,
     repoSlugMatches,
@@ -47,6 +52,11 @@ import {
  * Configure the SDM and add fulfillments or listeners to the created goals.
  */
 export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> = async (sdm, goals) => {
+    goals.autofix
+        .with(npmAuditAutofix())
+        .with(PackageLockUrlRewriteAutofix)
+        .with(TypeScriptImportsAutofix)
+        .with(TslintAutofix);
     goals.version
         .with(FileVersionerRegistration)
         .with(NpmVersionerRegistration);
@@ -61,8 +71,10 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
             inspection: runHtmlValidator({ sitePath: "public" }),
             pushTest: WebPackPushTest,
         })
+        .with(npmAuditInspection())
         .with(TslintAutoInspectRegistration)
-        .withProjectListener(siteCacheRestore(or(JekyllPushTest, WebPackPushTest)))
+        .withProjectListener(cacheClassifierRestore("site", or(JekyllPushTest, WebPackPushTest)))
+        .withProjectListener(cacheClassifierRestore("node_modules", WebPackPushTest))
         .withListener(singleIssuePerCategoryManaging(sdm.configuration.name || DefaultName, false));
     goals.fetchStaging
         .with({
