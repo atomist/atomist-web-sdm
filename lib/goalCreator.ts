@@ -96,7 +96,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         ],
         initContainers: [
             {
-                args: ["sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
                 image: "busybox:1.31.1",
                 name: "chown",
                 securityContext: {
