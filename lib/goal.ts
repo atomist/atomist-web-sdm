@@ -16,11 +16,11 @@
 
 import {
     AutoCodeInspection,
+    FulfillableGoal,
     GoalWithFulfillment,
     Queue,
 } from "@atomist/sdm";
 import {
-    Container,
     DeliveryGoals,
     Tag,
     Version,
@@ -48,23 +48,23 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     releaseTag: Tag;
 
     /** Jekyll web site build. */
-    jekyll: Container;
+    jekyll: FulfillableGoal;
     /** NPM webpack web site build. */
-    webpack: Container;
+    webpack: FulfillableGoal;
 
     /** Check HTML of web site. */
     codeInspection: AutoCodeInspection;
     /** Run htmltest on web site. */
-    htmltest: Container;
+    htmltest: FulfillableGoal;
 
     /** Deploy web site using Firebase. */
-    firebaseDeploy: Container;
+    firebaseDeploy: FulfillableGoal;
     /** Deploy staging web site using Firebase. */
-    firebaseStagingDeploy: Container;
+    firebaseStagingDeploy: FulfillableGoal;
     /** Deploy testing web site using Firebase. */
-    firebaseTestingDeploy: Container;
+    firebaseTestingDeploy: FulfillableGoal;
     /** Deploy production web site using Firebase. */
-    firebaseProductionDeploy: Container;
+    firebaseProductionDeploy: FulfillableGoal;
 
     /** Validiate deployed web site. */
     fetchStaging: Fetch;
