@@ -75,7 +75,7 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
         });
     goals.fetchTesting
         .with({
-            url: "https://test.atomist.com/",
+            url: "https://preview.atomist.com/",
             pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
         });
     goals.fetchProduction
