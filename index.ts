@@ -114,6 +114,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
             goals: [
                 goals.queue,
                 goals.firebaseDeploy,
+                goals.fetchProduction,
             ],
         },
     };

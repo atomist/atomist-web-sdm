@@ -86,6 +86,10 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
         .with({
             url: "https://app.atomist.com/",
             pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
+        })
+        .with({
+            url: "https://static.atomist.com/",
+            pushTest: repoSlugMatches(/^atomisthq\/s3-images$/),
         });
     goals.releaseTag
         .with({
