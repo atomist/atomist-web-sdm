@@ -91,6 +91,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
             test: [WebPackPushTest],
             goals: [
                 goals.queue,
+                goals.autofix,
                 goals.version,
                 goals.webpack,
                 [goals.codeInspection, goals.htmltest],
