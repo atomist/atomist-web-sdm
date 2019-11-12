@@ -21,7 +21,6 @@ import {
 } from "@atomist/sdm-core";
 import { singleIssuePerCategoryManaging } from "@atomist/sdm-pack-issue";
 import {
-    npmAuditAutofix,
     npmAuditInspection,
     NpmVersionerRegistration,
     NpmVersionIncrementerRegistration,
@@ -53,7 +52,6 @@ import {
  */
 export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> = async (sdm, goals) => {
     goals.autofix
-        .with(npmAuditAutofix())
         .with(PackageLockUrlRewriteAutofix)
         .with(TypeScriptImportsAutofix)
         .with(TslintAutofix);
