@@ -17,8 +17,10 @@
 import {
     AutoCodeInspection,
     Autofix,
+    ExecuteGoal,
     goal,
     GoalProjectListenerRegistration,
+    GoalWithFulfillment,
     IndependentOfEnvironment,
     PushTest,
     Queue,
@@ -43,18 +45,6 @@ import { AtomistWebSdmGoals } from "./goal";
 export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async sdm => {
 
     const queue = new Queue({ concurrent: 5 });
-    const approvalGate = goal(
-        {
-            approval: true,
-            descriptions: {
-                planned: "Approval pending",
-                waitingForApproval: "Waiting for approval",
-                completed: "Approved",
-            },
-            displayName: "approval",
-            environment: IndependentOfEnvironment,
-        },
-        async gi => { /* Intentionally left empty */ });
     const autofix = new Autofix();
     const version = new Version();
     const tag = new Tag();
@@ -155,15 +145,16 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             input: ["site"],
         },
     ));
-    const fetchStaging = new Fetch();
-    const fetchTesting = new Fetch();
-    const fetchProduction = new Fetch();
+    const fetchStaging = new Fetch("fetch-staging");
+    const fetchTesting = new Fetch("fetch-testing");
+    const fetchProduction = new Fetch("fetch-production");
+    const stagingApproval = approvalGoal("staging");
+    const testingApproval = approvalGoal("testing");
     const release = new Release();
     const incrementVersion = new IncrementVersion();
 
     return {
         queue,
-        approvalGate,
         autofix,
         version,
         tag,
@@ -179,10 +170,30 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         fetchStaging,
         fetchTesting,
         fetchProduction,
+        stagingApproval,
+        testingApproval,
         release,
         incrementVersion,
     };
 };
+
+/** Do nothing goal executor. */
+const noOpExecutor: ExecuteGoal = async () => { };
+
+/** Return an "approval" goal. */
+function approvalGoal(phase: string): GoalWithFulfillment {
+    const details = {
+        approval: true,
+        descriptions: {
+            planned: `Approve ${phase} planned`,
+            waitingForApproval: `Waiting for ${phase} approval`,
+            completed: `Approved ${phase}`,
+        },
+        displayName: `approval-${phase}`,
+        environment: IndependentOfEnvironment,
+    };
+    return goal(details, noOpExecutor);
+}
 
 /**
  * Restore the cache classifier "site" and throw an error if it fails.

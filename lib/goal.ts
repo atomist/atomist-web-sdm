@@ -38,8 +38,6 @@ import { Fetch } from "@atomist/sdm-pack-web";
 export interface AtomistWebSdmGoals extends DeliveryGoals {
     /** Manage concurrent tasks using Queue goal. */
     queue: Queue;
-    /** Approval gate goal, insert after goals that need manual approval. */
-    approvalGate: GoalWithFulfillment;
 
     /** Autofixes */
     autofix: Autofix;
@@ -73,6 +71,11 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     fetchStaging: Fetch;
     fetchTesting: Fetch;
     fetchProduction: Fetch;
+
+    /** Approve staging deployment. */
+    stagingApproval: GoalWithFulfillment;
+    /** Approve testing deployment. */
+    testingApproval: GoalWithFulfillment;
 
     /** Create release. */
     release: Release;

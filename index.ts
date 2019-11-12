@@ -82,7 +82,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
             test: [JekyllPushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
-                [goals.fetchStaging, goals.approvalGate],
+                [goals.fetchStaging, goals.stagingApproval],
                 [goals.releaseTag, goals.firebaseProductionDeploy],
                 [goals.fetchProduction, goals.release, goals.incrementVersion],
             ],
@@ -103,9 +103,9 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
             test: [WebPackPushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
-                [goals.fetchStaging, goals.approvalGate],
+                [goals.fetchStaging, goals.stagingApproval],
                 [goals.firebaseTestingDeploy],
-                [goals.fetchTesting, goals.approvalGate],
+                [goals.fetchTesting, goals.testingApproval],
                 [goals.releaseTag, goals.firebaseProductionDeploy],
                 [goals.fetchProduction, goals.release, goals.incrementVersion],
             ],
