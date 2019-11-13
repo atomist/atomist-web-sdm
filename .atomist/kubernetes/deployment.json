@@ -41,11 +41,11 @@
             "resources": {
               "limits": {
                 "cpu": "1000m",
-                "memory": "512Mi"
+                "memory": "1536Mi"
               },
               "requests": {
                 "cpu": "100m",
-                "memory": "384Mi"
+                "memory": "1024Mi"
               }
             },
             "securityContext": {
