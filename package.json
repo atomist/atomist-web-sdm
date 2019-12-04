@@ -35,7 +35,7 @@
     "@atomist/sdm-pack-issue": "^1.2.2",
     "@atomist/sdm-pack-node": "^1.2.0-master.20191111164040",
     "@atomist/sdm-pack-version": "^0.1.1",
-    "@atomist/sdm-pack-web": "^0.1.1-master.20191030144357",
+    "@atomist/sdm-pack-web": "^0.2.0-master.20191204144110",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
