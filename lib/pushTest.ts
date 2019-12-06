@@ -26,6 +26,11 @@ import {
 export const JekyllPushTest = hasFile("_config.yml");
 
 /**
+ * Test for shadow-cljs configuration file in project.
+ */
+export const ShadowCljsPushTest = hasFile("shadow-cljs.edn");
+
+/**
  * Test for webpack configuration file in project.
  */
 export const WebPackPushTest = hasFile("webpack.config.js");
