@@ -20,19 +20,16 @@ import {
     PushTest,
 } from "@atomist/sdm";
 
-/**
- * Test for Jekyll configuration file in project.
- */
+/** Test for Firebase configuration file in project. */
+export const FirebasePushTest = hasFile("firebase.json");
+
+/** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");
 
-/**
- * Test for shadow-cljs configuration file in project.
- */
+/** Test for shadow-cljs configuration file in project. */
 export const ShadowCljsPushTest = hasFile("shadow-cljs.edn");
 
-/**
- * Test for webpack configuration file in project.
- */
+/** Test for webpack configuration file in project. */
 export const WebPackPushTest = hasFile("webpack.config.js");
 
 /**

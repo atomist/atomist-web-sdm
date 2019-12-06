@@ -35,6 +35,7 @@ import { AtomistWebSdmGoals } from "./lib/goal";
 import { AtomistClientSdmGoalConfigurer } from "./lib/goalConfigurer";
 import { AtomistWebSdmGoalCreator } from "./lib/goalCreator";
 import {
+    FirebasePushTest,
     JekyllPushTest,
     repoSlugMatches,
     ShadowCljsPushTest,
@@ -80,7 +81,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         },
         jekyllDeploy: {
             dependsOn: [goals.tag],
-            test: [JekyllPushTest, ToDefaultBranch],
+            test: [JekyllPushTest, FirebasePushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.stagingApproval],
@@ -99,7 +100,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         },
         shadowCljsDeploy: {
             dependsOn: [goals.tag],
-            test: [ShadowCljsPushTest, ToDefaultBranch],
+            test: [ShadowCljsPushTest, FirebasePushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.stagingApproval],
@@ -120,7 +121,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         },
         webpackDeploy: {
             dependsOn: [goals.tag],
-            test: [WebPackPushTest, ToDefaultBranch],
+            test: [WebPackPushTest, FirebasePushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.stagingApproval],
