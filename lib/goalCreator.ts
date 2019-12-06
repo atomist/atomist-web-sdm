@@ -109,6 +109,53 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
         ],
     });
+    const shadowCljs = container("shadowcljs", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm ci --progress=false && npm run release"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "shadowcljs-docker:0.0.0-20191206182921",
+                name: "shadowcljs",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "1024Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "768Mi",
+                    },
+                },
+                securityContext: {
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
+        output: [
+            {
+                classifier: "node_modules",
+                pattern: { directory: "node_modules" },
+            },
+            {
+                classifier: "site",
+                pattern: { directory: "public" },
+            },
+        ],
+    });
     const codeInspection = new AutoCodeInspection({ isolate: true });
     const htmltest = container("htmltest", {
         containers: [
@@ -160,6 +207,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         tag,
         releaseTag,
         jekyll,
+        shadowCljs,
         webpack,
         codeInspection,
         htmltest,

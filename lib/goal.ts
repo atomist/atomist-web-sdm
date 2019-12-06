@@ -50,6 +50,8 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
 
     /** Jekyll web site build. */
     jekyll: FulfillableGoal;
+    /** Shadow-cljs web site build. */
+    shadowCljs: FulfillableGoal;
     /** NPM webpack web site build. */
     webpack: FulfillableGoal;
 
