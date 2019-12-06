@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Implement webpack delivery. [90eee5f](https://github.com/atomist/atomist-web-sdm/commit/90eee5f8a1d4c3d52cc32ad984043eca565ba5a9)
+-   Add shadow-cljs build. [#1](https://github.com/atomist/atomist-web-sdm/issues/1)
 
 ## [0.1.0](https://github.com/atomist/atomist-web-sdm/tree/0.1.0) - 2019-11-06
 
