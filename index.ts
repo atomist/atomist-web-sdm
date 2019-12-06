@@ -37,6 +37,7 @@ import { AtomistWebSdmGoalCreator } from "./lib/goalCreator";
 import {
     JekyllPushTest,
     repoSlugMatches,
+    ShadowCljsPushTest,
     WebPackPushTest,
 } from "./lib/pushTest";
 
@@ -80,6 +81,25 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         jekyllDeploy: {
             dependsOn: [goals.tag],
             test: [JekyllPushTest, ToDefaultBranch],
+            goals: [
+                [goals.firebaseStagingDeploy],
+                [goals.fetchStaging, goals.stagingApproval],
+                [goals.releaseTag, goals.firebaseProductionDeploy],
+                [goals.fetchProduction, goals.release, goals.incrementVersion],
+            ],
+        },
+        shadowCljs: {
+            test: [ShadowCljsPushTest],
+            goals: [
+                goals.queue,
+                goals.version,
+                goals.shadowCljs,
+                goals.tag,
+            ],
+        },
+        shadowCljsDeploy: {
+            dependsOn: [goals.tag],
+            test: [ShadowCljsPushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.stagingApproval],
