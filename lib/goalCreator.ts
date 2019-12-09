@@ -109,13 +109,13 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
         ],
     });
-    const shadowCljsTest = container("shadowcljs", {
+    const shadowCljsTest = container("shadowcljs-test", {
         containers: [
             {
                 args: ["bash", "-c", "npm ci --progress=false && npm run test"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "atomist/shadow-cljs:0.1.0",
-                name: "shadowcljs",
+                name: "shadowcljs-test",
                 resources: {
                     limits: {
                         cpu: "1000m",
