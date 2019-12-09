@@ -112,9 +112,9 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
     const shadowCljs = container("shadowcljs", {
         containers: [
             {
-                args: ["bash", "-c", "apt-get update && apt-get -q -y install openjdk-8-jdk curl && npm install -g shadow-cljs && curl -s https://download.clojure.org/install/linux-install-1.10.1.492.sh | bash && npm ci --progress=false && npm run release"],
+                args: ["bash", "-c", "npm ci --progress=false && npm run release"],
                 env: [{ name: "NODE_ENV", value: "development" }],
-                image: "node:13.3.0",
+                image: "atomist/shadow-cljs:0.1.0",
                 name: "shadowcljs",
                 resources: {
                     limits: {
@@ -125,6 +125,23 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                         cpu: "100m",
                         memory: "768Mi",
                     },
+                },
+                securityContext: {
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
                 },
             },
         ],
