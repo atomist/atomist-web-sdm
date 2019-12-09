@@ -82,6 +82,10 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
         .with({
             url: "https://app.atomist.services/",
             pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
+        })
+        .with({
+            url: "https://atomist-new-web-app-staging.firebaseapp.com/",
+            pushTest: repoSlugMatches(/^atomisthq\/cljs-web-app$/),
         });
     goals.fetchTesting
         .with({
@@ -100,6 +104,10 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
         .with({
             url: "https://static.atomist.com/",
             pushTest: repoSlugMatches(/^atomisthq\/s3-images$/),
+        })
+        .with({
+            url: "https://atomist-new-web-app-production.firebaseapp.com/",
+            pushTest: repoSlugMatches(/^atomisthq\/cljs-web-app$/),
         });
     goals.releaseTag
         .with({
