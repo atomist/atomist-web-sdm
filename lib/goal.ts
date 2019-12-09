@@ -59,6 +59,8 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     codeInspection: AutoCodeInspection;
     /** Run htmltest on web site. */
     htmltest: FulfillableGoal;
+    /** Run shadow-cljs tests. */
+    shadowCljsTest: FulfillableGoal;
 
     /** Deploy web site using Firebase. */
     firebaseDeploy: FulfillableGoal;

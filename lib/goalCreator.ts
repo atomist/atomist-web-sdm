@@ -109,10 +109,10 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
         ],
     });
-    const shadowCljs = container("shadowcljs", {
+    const shadowCljsTest = container("shadowcljs", {
         containers: [
             {
-                args: ["bash", "-c", "npm ci --progress=false && npm run release"],
+                args: ["bash", "-c", "npm ci --progress=false && npm run test"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "atomist/shadow-cljs:0.1.0",
                 name: "shadowcljs",
@@ -150,6 +150,46 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 classifier: "node_modules",
                 pattern: { directory: "node_modules" },
             },
+        ],
+    });
+    const shadowCljs = container("shadowcljs", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm run release"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "atomist/shadow-cljs:0.1.0",
+                name: "shadowcljs",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "1024Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "768Mi",
+                    },
+                },
+                securityContext: {
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
+        input: ["node_modules"],
+        output: [
             {
                 classifier: "site",
                 pattern: { directory: "public" },
@@ -207,6 +247,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         tag,
         releaseTag,
         jekyll,
+        shadowCljsTest,
         shadowCljs,
         webpack,
         codeInspection,

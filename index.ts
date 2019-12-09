@@ -94,6 +94,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
             goals: [
                 goals.queue,
                 goals.version,
+                goals.shadowCljsTest,
                 goals.shadowCljs,
                 goals.tag,
             ],
