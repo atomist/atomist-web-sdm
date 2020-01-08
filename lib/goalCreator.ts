@@ -53,7 +53,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         containers: [
             {
                 args: ["jekyll", "build"],
-                image: "jekyll/jekyll:3.8.4",
+                image: "atomist/web-site-build:0.1.0",
                 name: "jekyll",
             },
         ],
