@@ -66,20 +66,15 @@ export interface AtomistWebSdmGoals extends DeliveryGoals {
     firebaseDeploy: FulfillableGoal;
     /** Deploy staging web site using Firebase. */
     firebaseStagingDeploy: FulfillableGoal;
-    /** Deploy testing web site using Firebase. */
-    firebaseTestingDeploy: FulfillableGoal;
     /** Deploy production web site using Firebase. */
     firebaseProductionDeploy: FulfillableGoal;
 
     /** Validiate deployed web site. */
     fetchStaging: Fetch;
-    fetchTesting: Fetch;
     fetchProduction: Fetch;
 
     /** Approve staging deployment. */
     stagingApproval: GoalWithFulfillment;
-    /** Approve testing deployment. */
-    testingApproval: GoalWithFulfillment;
 
     /** Create release. */
     release: Release;

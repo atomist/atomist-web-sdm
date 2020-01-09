@@ -219,7 +219,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
         ],
     });
-    const [firebaseStagingDeploy, firebaseTestingDeploy, firebaseProductionDeploy] = ["staging", "testing", "production"].map(env => container(
+    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
         `firebase-${env}-deploy`,
         {
             containers: [
@@ -233,10 +233,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         },
     ));
     const fetchStaging = new Fetch("fetch-staging");
-    const fetchTesting = new Fetch("fetch-testing");
     const fetchProduction = new Fetch("fetch-production");
     const stagingApproval = approvalGoal("staging");
-    const testingApproval = approvalGoal("testing");
     const release = new Release();
     const incrementVersion = new IncrementVersion();
 
@@ -254,13 +252,10 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
         htmltest,
         firebaseDeploy,
         firebaseStagingDeploy,
-        firebaseTestingDeploy,
         firebaseProductionDeploy,
         fetchStaging,
-        fetchTesting,
         fetchProduction,
         stagingApproval,
-        testingApproval,
         release,
         incrementVersion,
     };
