@@ -101,7 +101,7 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
             pushTest: repoSlugMatches(/^atomisthq\/s3-images$/),
         })
         .with({
-            url: "https://atomist-new-web-app-production.firebaseapp.com/",
+            url: "https://preview.atomist.com/",
             pushTest: repoSlugMatches(/^atomisthq\/web-app-cljs$/),
         });
     goals.releaseTag
