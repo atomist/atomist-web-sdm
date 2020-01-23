@@ -97,7 +97,7 @@ export const AtomistClientSdmGoalConfigurer: GoalConfigurer<AtomistWebSdmGoals> 
             pushTest: repoSlugMatches(/^atomisthq\/web-app$/),
         })
         .with({
-            url: "https://static.atomist.com/",
+            url: "https://static.atomist.com/logo/atomist-white-mark-xsmall.png",
             pushTest: repoSlugMatches(/^atomisthq\/s3-images$/),
         })
         .with({
