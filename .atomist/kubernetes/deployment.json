@@ -18,10 +18,6 @@
                 "value": "1"
               },
               {
-                "name": "GOOGLE_APPLICATION_CREDENTIALS",
-                "value": "/opt/gcs/credentials.json"
-              },
-              {
                 "name": "TMPDIR",
                 "value": "/tmp"
               }
@@ -67,11 +63,6 @@
                 "readOnly": true
               },
               {
-                "mountPath": "/opt/gcs",
-                "name": "gcs-credentials",
-                "readOnly": true
-              },
-              {
                 "mountPath": "/tmp",
                 "name": "sdm-tmp"
               }
@@ -111,13 +102,6 @@
             "secret": {
               "defaultMode": 288,
               "secretName": "atomist-web-sdm"
-            }
-          },
-          {
-            "name": "gcs-credentials",
-            "secret": {
-              "defaultMode": 288,
-              "secretName": "gcs-credentials"
             }
           },
           {
