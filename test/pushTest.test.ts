@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {InMemoryProject} from "@atomist/automation-client";
+import { InMemoryProject } from "@atomist/automation-client";
 import * as assert from "power-assert";
-import {FirebasePushTest} from "../lib/pushTest";
+import { FirebasePushTest } from "../lib/pushTest";
 
 describe ("pushTests", () => {
     describe ("FirebaseConfiguration", () => {

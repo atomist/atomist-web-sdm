@@ -15,7 +15,8 @@
  */
 
 import {
-    ImmaterialGoals, not,
+    ImmaterialGoals,
+    not,
     ToDefaultBranch,
 } from "@atomist/sdm";
 import {
