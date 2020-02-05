@@ -15,7 +15,7 @@
  */
 
 import {
-    ImmaterialGoals,
+    ImmaterialGoals, not,
     ToDefaultBranch,
 } from "@atomist/sdm";
 import {
@@ -101,7 +101,7 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         },
         shadowCljsDeploy: {
             dependsOn: [goals.tag],
-            test: [ShadowCljsPushTest, FirebasePushTest, ToDefaultBranch],
+            test: [not(repoSlugMatches(/^atomisthq\/admin-app$/)), ShadowCljsPushTest, FirebasePushTest, ToDefaultBranch],
             goals: [
                 [goals.firebaseStagingDeploy],
                 [goals.fetchStaging, goals.stagingApproval],

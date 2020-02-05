@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+import {projectUtils} from "@atomist/automation-client";
 import {
     hasFile,
+    predicatePushTest,
     pushTest,
     PushTest,
 } from "@atomist/sdm";
 
 /** Test for Firebase configuration file in project. */
-export const FirebasePushTest = hasFile("firebase.json");
+export const FirebasePushTest = predicatePushTest(
+    "HasFirebaseConfiguration",
+    async p => projectUtils.fileExists(p, ["firebase.json", "firebase.dev.json", "firebase.prod.json"]));
 
 /** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");

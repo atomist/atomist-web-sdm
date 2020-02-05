@@ -194,6 +194,14 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 classifier: "site",
                 pattern: { directory: "public" },
             },
+            {
+                classifier: "server",
+                pattern: { directory: "resources/server"},
+            },
+            {
+                classifier: "config",
+                pattern: { globPattern: "firebase.json"},
+            },
         ],
     });
     const codeInspection = new AutoCodeInspection({ isolate: true });
@@ -229,7 +237,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     name: "firebase",
                 },
             ],
-            input: ["site"],
+            input: ["site", "server", "config"],
         },
     ));
     const fetchStaging = new Fetch("fetch-staging");
