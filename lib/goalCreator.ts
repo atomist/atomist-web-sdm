@@ -237,7 +237,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     name: "firebase",
                 },
             ],
-            input: ["site", "server", "config"],
+            input: ["site", "server", "config", "node_modules"],
         },
     ));
     const fetchStaging = new Fetch("fetch-staging");
