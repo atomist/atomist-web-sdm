@@ -196,7 +196,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
             },
             {
                 classifier: "server",
-                pattern: { directory: "resources/server"},
+                pattern: { globPattern: "functions/lib.js"},
             },
             {
                 classifier: "config",
