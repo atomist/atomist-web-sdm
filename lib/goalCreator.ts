@@ -145,9 +145,14 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
+        input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
-                classifier: "node_modules",
+                classifier: "${repo.owner}/${repo.name}/mvn/cache",
+                pattern: { directory: ".m2" },
+            },
+            {
+                classifier: "${repo.owner}/${repo.name}/node_modules",
                 pattern: { directory: "node_modules" },
             },
         ],
@@ -188,7 +193,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
-        input: ["node_modules"],
+        input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
                 classifier: "site",
@@ -237,7 +242,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     name: "firebase",
                 },
             ],
-            input: ["site", "server", "config", "node_modules"],
+            input: ["${repo.owner}/${repo.name}/node_modules", "site", "server", "config"],
         },
     ));
     const fetchStaging = new Fetch("fetch-staging");
