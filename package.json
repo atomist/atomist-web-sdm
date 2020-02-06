@@ -1,6 +1,6 @@
 {
   "name": "@atomist/atomist-web-sdm",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Atomist Software Delivery Machine (SDM) that delivers Atomist open-source projects",
   "author": {
     "name": "Atomist",
@@ -24,22 +24,13 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/automation-client": "^2.0.0-master.20191206152722",
-    "@atomist/automation-client-ext-dashboard": "^1.1.0",
-    "@atomist/automation-client-ext-humio": "^0.2.1",
-    "@atomist/automation-client-ext-raven": "^1.0.3",
-    "@atomist/sdm": "^2.0.0-master.20191206153457",
-    "@atomist/sdm-core": "^2.0.0-master.20191206192629",
-    "@atomist/sdm-pack-build": "^1.0.6",
-    "@atomist/sdm-pack-gcp": "0.1.0-master.20191030133626",
-    "@atomist/sdm-pack-issue": "^1.2.2",
-    "@atomist/sdm-pack-node": "^1.2.0-master.20191111164040",
-    "@atomist/sdm-pack-version": "^0.1.1",
-    "@atomist/sdm-pack-web": "^0.2.0-master.20191204173953",
+    "@atomist/automation-client": "2.0.0-master.20200205130055",
+    "@atomist/sdm": "2.0.0-master.20200204153359",
+    "@atomist/sdm-core": "2.0.0-master.20200205194750",
+    "@atomist/sdm-pack-gcp": "0.1.0-master.20200205105926",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "@atomist/sdm-local": "^1.2.1",
     "@types/lodash": "^4.14.144",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
@@ -76,8 +67,7 @@
     "lint:fix": "npm run lint -- --fix",
     "start": "atm-start",
     "test": "mocha --require espower-typescript/guess \"test/**/*.test.ts\"",
-    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\"",
-    "typedoc": "npm run doc"
+    "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.test.ts}\""
   },
   "engines": {
     "node": ">=8.2.0",

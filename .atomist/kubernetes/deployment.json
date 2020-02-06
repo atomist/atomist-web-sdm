@@ -14,10 +14,6 @@
                 "value": "kubernetes"
               },
               {
-                "name": "FORCE_COLOR",
-                "value": "1"
-              },
-              {
                 "name": "TMPDIR",
                 "value": "/tmp"
               }
@@ -75,7 +71,7 @@
               "git config --global user.email 'bot@atomist.com' && git config --global user.name 'Atomist Bot'"
             ],
             "command": ["/bin/sh", "-c"],
-            "image": "atomist/sdm-base:0.3.0",
+            "image": "atomist/sdm-base:0.4.1",
             "name": "atomist-home-git",
             "securityContext": {
               "allowPrivilegeEscalation": false,
