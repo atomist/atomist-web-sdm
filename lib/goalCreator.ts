@@ -145,9 +145,17 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
+        // tslint:disable-next-line:no-invalid-template-strings
+        input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
-                classifier: "node_modules",
+                // tslint:disable-next-line:no-invalid-template-strings
+                classifier: "${repo.owner}/${repo.name}/mvn/cache",
+                pattern: { directory: ".m2" },
+            },
+            {
+                // tslint:disable-next-line:no-invalid-template-strings
+                classifier: "${repo.owner}/${repo.name}/node_modules",
                 pattern: { directory: "node_modules" },
             },
         ],
@@ -188,7 +196,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
-        input: ["node_modules"],
+        // tslint:disable-next-line:no-invalid-template-strings
+        input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
                 classifier: "site",
@@ -237,7 +246,8 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     name: "firebase",
                 },
             ],
-            input: ["site", "server", "config", "node_modules"],
+            // tslint:disable-next-line:no-invalid-template-strings
+            input: ["${repo.owner}/${repo.name}/node_modules", "site", "server", "config"],
         },
     ));
     const fetchStaging = new Fetch("fetch-staging");
