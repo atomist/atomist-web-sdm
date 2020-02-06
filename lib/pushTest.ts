@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { projectUtils } from "@atomist/automation-client";
+import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
 import {
-    hasFile,
     predicatePushTest,
     pushTest,
     PushTest,
-} from "@atomist/sdm";
+} from "@atomist/sdm/lib/api/mapping/PushTest";
+import { hasFile } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
 
 /** Test for Firebase configuration file in project. */
 export const FirebasePushTest = predicatePushTest(
     "HasFirebaseConfiguration",
-    async p => projectUtils.fileExists(p, ["firebase.json", "firebase.dev.json", "firebase.prod.json"]));
+    async p => fileExists(p, "firebase*.json"));
 
 /** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");
@@ -47,3 +47,17 @@ export function repoSlugMatches(re: RegExp): PushTest {
     return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`,
         async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
 }
+
+/**
+ * Push test detecting if the after commit of the push is related to a
+ * release.
+ */
+export const IsReleaseCommit: PushTest = {
+    name: "IsReleaseCommit",
+    mapping: async pi => {
+        const versionRegexp = /Version: increment after .*release/i;
+        const changelogRegexp = /Changelog: add release .*/i;
+        const commitMessage = (pi.push.after && pi.push.after.message) ? pi.push.after.message : "";
+        return versionRegexp.test(commitMessage) || changelogRegexp.test(commitMessage);
+    },
+};
