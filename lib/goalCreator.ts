@@ -145,13 +145,16 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
+        // tslint:disable-next-line:no-invalid-template-strings
         input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
+                // tslint:disable-next-line:no-invalid-template-strings
                 classifier: "${repo.owner}/${repo.name}/mvn/cache",
                 pattern: { directory: ".m2" },
             },
             {
+                // tslint:disable-next-line:no-invalid-template-strings
                 classifier: "${repo.owner}/${repo.name}/node_modules",
                 pattern: { directory: "node_modules" },
             },
@@ -193,6 +196,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                 },
             },
         ],
+        // tslint:disable-next-line:no-invalid-template-strings
         input: ["${repo.owner}/${repo.name}/node_modules", "${repo.owner}/${repo.name}/mvn/cache"],
         output: [
             {
@@ -242,6 +246,7 @@ export const AtomistWebSdmGoalCreator: GoalCreator<AtomistWebSdmGoals> = async s
                     name: "firebase",
                 },
             ],
+            // tslint:disable-next-line:no-invalid-template-strings
             input: ["${repo.owner}/${repo.name}/node_modules", "site", "server", "config"],
         },
     ));
