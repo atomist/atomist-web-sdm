@@ -55,10 +55,11 @@ export const configuration = configure(async sdm => {
             {
                 /* tslint:disable:no-invalid-template-strings */
                 args: [
+                    "set -ex; " +
                     "if [[ -f VERSION ]]; then v=$(< VERSION); " +
                     "elif [[ -f package.json ]]; then v=$(npx -c 'echo $npm_package_version'); " +
                     "else echo 'No version file found'; v=0.0.0; fi; " +
-                    "b=$(echo \"${branch}\" | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
+                    "b=$(echo '${branch}' | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
                     "d=$(date -u +%Y%m%d%H%M%S); " +
                     "p=$v-$b.$d; " +
                     `printf -v r '{"SdmGoal":{"push":{"after":{"version":"%s"}}}}' "$p"; ` +
@@ -115,7 +116,8 @@ export const configuration = configure(async sdm => {
     const webpack = container("webpack", {
         containers: [
             {
-                args: ["bash", "-c", "npm ci --progress=false && npm run --if-present compile && npm test"],
+                args: ["npm ci --progress=false && npm run --if-present compile && npm test"],
+                command: ["bash", "-c"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "node:12.13.0",
                 name: "webpack",
@@ -140,7 +142,8 @@ export const configuration = configure(async sdm => {
         ],
         initContainers: [
             {
-                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                command: ["/bin/sh", "-c"],
                 image: "busybox:1.31.1",
                 name: "chown",
                 securityContext: {
@@ -168,7 +171,8 @@ export const configuration = configure(async sdm => {
     const shadowCljsTest = container("shadowcljs-test", {
         containers: [
             {
-                args: ["bash", "-c", "npm ci --progress=false && npm run test"],
+                args: ["npm ci --progress=false && npm run test"],
+                command: ["bash", "-c"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "atomist/shadow-cljs:0.1.0",
                 name: "shadowcljs-test",
@@ -193,7 +197,8 @@ export const configuration = configure(async sdm => {
         ],
         initContainers: [
             {
-                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                command: ["/bin/sh", "-c"],
                 image: "busybox:1.31.1",
                 name: "chown",
                 securityContext: {
@@ -225,7 +230,8 @@ export const configuration = configure(async sdm => {
     const shadowCljs = container("shadowcljs", {
         containers: [
             {
-                args: ["bash", "-c", "npm run release"],
+                args: ["npm run release"],
+                command: ["bash", "-c"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "atomist/shadow-cljs:0.1.0",
                 name: "shadowcljs",
@@ -250,7 +256,8 @@ export const configuration = configure(async sdm => {
         ],
         initContainers: [
             {
-                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                command: ["/bin/sh", "-c"],
                 image: "busybox:1.31.1",
                 name: "chown",
                 securityContext: {
@@ -267,9 +274,7 @@ export const configuration = configure(async sdm => {
             { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
             { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
         ],
-        /* tslint:enable:no-invalid-template-strings */
         output: [
-            /* tslint:disable:no-invalid-template-strings */
             {
                 classifier: "${repo.owner}/${repo.name}/${sha}/site",
                 pattern: { directory: "public" },
@@ -282,8 +287,8 @@ export const configuration = configure(async sdm => {
                 classifier: "${repo.owner}/${repo.name}/${sha}/config",
                 pattern: { globPattern: "firebase.json" },
             },
-            /* tslint:enable:no-invalid-template-strings */
         ],
+        /* tslint:enable:no-invalid-template-strings */
     });
     const htmlValidator = container("htmlvalidator", {
         containers: [
