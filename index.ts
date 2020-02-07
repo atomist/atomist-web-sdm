@@ -297,7 +297,7 @@ export const configuration = configure(async sdm => {
                     "if [[ -d _site ]]; then site=_site; " +
                     "elif [[ -d public ]]; then site=public; " +
                     `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
-                    './vnu-runtime-image/bin/vnu --skip-non-html --also-check-css --also-check-svg "$site"',
+                    '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-css --also-check-svg "$site"',
                 ],
                 command: ["/bin/bash", "-c"],
                 image: "validator/validator:latest",
@@ -329,7 +329,7 @@ export const configuration = configure(async sdm => {
         containers: [
             {
                 args: ["htmltest"],
-                image: "wjdp/htmltest:v0.12.1",
+                image: "wjdp/htmltest:v0.12.0",
                 name: "htmltest",
                 securityContext: {
                     allowPrivilegeEscalation: false,
