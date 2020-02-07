@@ -425,8 +425,8 @@ export const configuration = configure(async sdm => {
                 queue,
                 version,
                 jekyll,
-                [htmlValidator, htmltest],
-                tag,
+                htmltest,
+                [htmlValidator, tag],
             ],
         },
         shadowCljs: {
@@ -445,8 +445,8 @@ export const configuration = configure(async sdm => {
                 queue,
                 version,
                 webpack,
-                [htmlValidator, htmltest],
-                tag,
+                htmltest,
+                [htmlValidator, tag],
             ],
         },
         deploy: {
