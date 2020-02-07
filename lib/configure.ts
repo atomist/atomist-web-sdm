@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Atomist, Inc.
+ * Copyright © 2020 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
-import { configureHumio } from "@atomist/automation-client-ext-humio";
-import { configureRaven } from "@atomist/automation-client-ext-raven";
-import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm";
-import {
-    ConfigureMachineOptions,
-    LocalSoftwareDeliveryMachineConfiguration,
-} from "@atomist/sdm-core";
+import { LocalSoftwareDeliveryMachineConfiguration } from "@atomist/sdm-core/lib/internal/machine/LocalSoftwareDeliveryMachineOptions";
+import { ConfigureMachineOptions } from "@atomist/sdm-core/lib/machine/configure";
+import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm/lib/api/machine/SoftwareDeliveryMachineOptions";
 import * as _ from "lodash";
 
 /**
  * Use to workaround name being optional in the configuration when it
- * reall is not.
+ * really is not.
  */
 export const DefaultName = "@atomist/atomist-web-sdm";
 
@@ -40,6 +35,7 @@ async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfigurati
             k8s: {
                 job: {
                     cleanupInterval: 1000 * 60 * 10,
+                    ttl: 1000 * 60 * 30,
                 },
             },
             cache: {
@@ -55,10 +51,5 @@ async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfigurati
 export const machineOptions: ConfigureMachineOptions = {
     preProcessors: [
         configureSdmDefaults,
-    ],
-    postProcessors: [
-        configureDashboardNotifications,
-        configureHumio,
-        configureRaven,
     ],
 };

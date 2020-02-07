@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-import {
-    ImmaterialGoals,
-    not,
-    ToDefaultBranch,
-} from "@atomist/sdm";
-import {
-    configure,
-    githubGoalStatusSupport,
-    goalStateSupport,
-    k8sGoalSchedulingSupport,
-} from "@atomist/sdm-core";
-import { gcpSupport } from "@atomist/sdm-pack-gcp";
-import { issueSupport } from "@atomist/sdm-pack-issue";
-import { IsReleaseCommit } from "@atomist/sdm-pack-version";
-import {
-    DefaultName,
-    machineOptions,
-} from "./lib/configure";
-import { AtomistWebSdmGoals } from "./lib/goal";
-import { AtomistClientSdmGoalConfigurer } from "./lib/goalConfigurer";
-import { AtomistWebSdmGoalCreator } from "./lib/goalCreator";
+import { Tag } from "@atomist/sdm-core/lib/goal/common/Tag";
+import { container } from "@atomist/sdm-core/lib/goal/container/container";
+import { executeTag } from "@atomist/sdm-core/lib/internal/delivery/build/executeTag";
+import { configure } from "@atomist/sdm-core/lib/machine/configure";
+import { githubGoalStatusSupport } from "@atomist/sdm-core/lib/pack/github-goal-status/github";
+import { goalStateSupport } from "@atomist/sdm-core/lib/pack/goal-state/goalState";
+import { k8sGoalSchedulingSupport } from "@atomist/sdm-core/lib/pack/k8s/goalScheduling";
+import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
+import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
+import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
+import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
+import { not } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
+import { machineOptions } from "./lib/configure";
 import {
     FirebasePushTest,
+    IsReleaseCommit,
     JekyllPushTest,
     repoSlugMatches,
     ShadowCljsPushTest,
     WebPackPushTest,
 } from "./lib/pushTest";
 
-export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
+export const configuration = configure(async sdm => {
 
     sdm.addExtensionPacks(
         gcpSupport(),
@@ -53,17 +46,368 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
                 enabled: true,
             },
         }),
-        issueSupport({
-            labelIssuesOnDeployment: true,
-            closeCodeInspectionIssuesOnBranchDeletion: {
-                enabled: true,
-                source: sdm.configuration.name || DefaultName,
-            },
-        }),
         k8sGoalSchedulingSupport(),
     );
 
-    const goals = await sdm.createGoals(AtomistWebSdmGoalCreator, [AtomistClientSdmGoalConfigurer]);
+    const queue = new Queue({ concurrent: 5 });
+    const version = container("version", {
+        containers: [
+            {
+                /* tslint:disable:no-invalid-template-strings */
+                args: [
+                    "if [[ -f VERSION ]]; then v=$(< VERSION); " +
+                    "elif [[ -f package.json ]]; then v=$(npx -c 'echo $npm_package_version'); " +
+                    "else echo 'No version file found'; v=0.0.0; fi; " +
+                    "b=$(echo \"${branch}\" | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
+                    "d=$(date -u +%Y%m%d%H%M%S); " +
+                    "p=$v-$b.$d; " +
+                    `printf -v r '{"SdmGoal":{"push":{"after":{"version":"%s"}}}}' "$p"; ` +
+                    'echo "$r" > "$ATOMIST_RESULT"',
+                ],
+                /* tslint:enable:no-invalid-template-strings */
+                command: ["/bin/bash", "-c"],
+                image: "node:12.14.1",
+                name: "version",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "256MiB",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "256MiB",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+    });
+    const tag = new Tag();
+    const releaseTag = new Tag()
+        .with({
+            name: "release-tag",
+            goalExecutor: executeTag({ release: true }),
+        });
+    const jekyll = container("jekyll", {
+        containers: [
+            {
+                args: ["jekyll", "build"],
+                image: "atomist/web-site-build:0.1.0",
+                name: "jekyll",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                },
+            },
+        ],
+        output: [{
+            // tslint:disable-next-line:no-invalid-template-strings
+            classifier: "${repo.owner}/${repo.name}/site",
+            pattern: { directory: "_site" },
+        }],
+    });
+    const webpack = container("webpack", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm ci --progress=false && npm run --if-present compile && npm test"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "node:12.13.0",
+                name: "webpack",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "2560Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "2048Mi",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
+        output: [
+            /* tslint:disable:no-invalid-template-strings */
+            {
+                classifier: "${repo.owner}/${repo.name}/node_modules",
+                pattern: { directory: "node_modules" },
+            },
+            {
+                classifier: "${repo.owner}/${repo.name}/site",
+                pattern: { directory: "public" },
+            },
+            /* tslint:enable:no-invalid-template-strings */
+        ],
+    });
+    const shadowCljsTest = container("shadowcljs-test", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm ci --progress=false && npm run test"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "atomist/shadow-cljs:0.1.0",
+                name: "shadowcljs-test",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "1024Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "768Mi",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
+        /* tslint:disable:no-invalid-template-strings */
+        input: [
+            { classifier: "${repo.owner}/${repo.name}/node_modules" },
+            { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
+        ],
+        output: [
+            {
+                classifier: "${repo.owner}/${repo.name}/mvn/cache",
+                pattern: { directory: ".m2" },
+            },
+            {
+                classifier: "${repo.owner}/${repo.name}/node_modules",
+                pattern: { directory: "node_modules" },
+            },
+        ],
+        /* tslint:enable:no-invalid-template-strings */
+    });
+    const shadowCljs = container("shadowcljs", {
+        containers: [
+            {
+                args: ["bash", "-c", "npm run release"],
+                env: [{ name: "NODE_ENV", value: "development" }],
+                image: "atomist/shadow-cljs:0.1.0",
+                name: "shadowcljs",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "1024Mi",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "768Mi",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+        initContainers: [
+            {
+                args: ["/bin/sh", "-c", `chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"`],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
+        /* tslint:disable:no-invalid-template-strings */
+        input: [
+            { classifier: "${repo.owner}/${repo.name}/node_modules" },
+            { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
+        ],
+        /* tslint:enable:no-invalid-template-strings */
+        output: [
+            /* tslint:disable:no-invalid-template-strings */
+            {
+                classifier: "${repo.owner}/${repo.name}/site",
+                pattern: { directory: "public" },
+            },
+            {
+                classifier: "${repo.owner}/${repo.name}/server",
+                pattern: { globPattern: "functions/lib.js" },
+            },
+            {
+                classifier: "${repo.owner}/${repo.name}/config",
+                pattern: { globPattern: "firebase.json" },
+            },
+            /* tslint:enable:no-invalid-template-strings */
+        ],
+    });
+    const htmlValidator = container("htmlvalidator", {
+        containers: [
+            {
+                args: [
+                    "if [[ -d _site ]]; then site=_site; " +
+                    "elif [[ -d public ]]; then site=public; " +
+                    `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
+                    './vnu-runtime-image/bin/vnu --skip-non-html --also-check-css --also-check-svg "$site"',
+                ],
+                command: ["/bin/bash", "-c"],
+                image: "validator/validator:latest",
+                name: "nu",
+                resources: {
+                    limits: {
+                        cpu: "2000m",
+                        memory: "1024Mi",
+                    },
+                    requests: {
+                        cpu: "500m",
+                        memory: "768Mi",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    readOnlyRootFilesystem: true,
+                    runAsGroup: 65534,
+                    runAsNonRoot: true,
+                    runAsUser: 65534,
+                },
+            },
+        ],
+        // tslint:disable-next-line:no-invalid-template-strings
+        input: [{ classifier: "${repo.owner}/${repo.name}/site" }],
+    });
+    const htmltest = container("htmltest", {
+        containers: [
+            {
+                args: ["htmltest"],
+                image: "wjdp/htmltest:v0.12.1",
+                name: "htmltest",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                },
+            },
+        ],
+        // tslint:disable-next-line:no-invalid-template-strings
+        input: [{ classifier: "${repo.owner}/${repo.name}/site" }],
+    });
+    const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
+    const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
+    const firebaseImage = "andreysenov/firebase-tools:7.4.0";
+    const firebaseDeploy = container("firebase-deploy", {
+        containers: [
+            {
+                args: ["firebase", "--non-interactive", "deploy", ...firebaseTokenArgs],
+                image: firebaseImage,
+                name: "firebase",
+            },
+        ],
+    });
+    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
+        `firebase-${env}-deploy`,
+        {
+            containers: [
+                {
+                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
+                    image: firebaseImage,
+                    name: "firebase",
+                },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+            input: [
+                { classifier: "${repo.owner}/${repo.name}/node_modules" },
+                { classifier: "${repo.owner}/${repo.name}/site" },
+                { classifier: "${repo.owner}/${repo.name}/server" },
+                { classifier: "${repo.owner}/${repo.name}/config" },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+        },
+    ));
+    firebaseProductionDeploy.definition.preApprovalRequired = true;
+
+    const incrementVersion = container("increment-version", {
+        containers: [
+            {
+                /* tslint:disable:no-invalid-template-strings */
+                args: [
+                    "set -ex; " +
+                    "git checkout ${branch} && git pull origin ${branch}; " +
+                    "if [[ -f VERSION ]]; then " +
+                    `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
+                    'echo "$v" > VERSION && git add VERSION; ' +
+                    "elif [[ -f package.json ]]; then npm version --no-git-tag-version patch && git add package.json; " +
+                    "else echo 'No version file found'; exit 1; fi; " +
+                    'printf -v m "Version: increment after release\n\n[atomist:generated]"; ' +
+                    'git commit -m "$m" && git push origin ${branch}',
+                ],
+                /* tslint:enable:no-invalid-template-strings */
+                command: ["/bin/bash", "-c"],
+                image: "node:12.14.1",
+                name: "version",
+                resources: {
+                    limits: {
+                        cpu: "1000m",
+                        memory: "256MiB",
+                    },
+                    requests: {
+                        cpu: "100m",
+                        memory: "256MiB",
+                    },
+                },
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 1000,
+                    runAsNonRoot: true,
+                    runAsUser: 1000,
+                },
+            },
+        ],
+    });
 
     return {
         immaterial: {
@@ -73,70 +417,48 @@ export const configuration = configure<AtomistWebSdmGoals>(async sdm => {
         jekyll: {
             test: [JekyllPushTest],
             goals: [
-                goals.queue,
-                goals.version,
-                goals.jekyll,
-                [goals.codeInspection, goals.htmltest],
-                goals.tag,
-            ],
-        },
-        jekyllDeploy: {
-            dependsOn: [goals.tag],
-            test: [JekyllPushTest, FirebasePushTest, ToDefaultBranch],
-            goals: [
-                [goals.firebaseStagingDeploy],
-                [goals.fetchStaging, goals.stagingApproval],
-                [goals.releaseTag, goals.firebaseProductionDeploy],
-                [goals.fetchProduction, goals.release, goals.incrementVersion],
+                queue,
+                version,
+                jekyll,
+                [htmlValidator, htmltest],
+                tag,
             ],
         },
         shadowCljs: {
-            test: [ShadowCljsPushTest],
+            test: [not(repoSlugMatches(/^atomisthq\/admin-app$/)), ShadowCljsPushTest],
             goals: [
-                goals.queue,
-                goals.version,
-                goals.shadowCljsTest,
-                goals.shadowCljs,
-                goals.tag,
-            ],
-        },
-        shadowCljsDeploy: {
-            dependsOn: [goals.tag],
-            test: [not(repoSlugMatches(/^atomisthq\/admin-app$/)), ShadowCljsPushTest, FirebasePushTest, ToDefaultBranch],
-            goals: [
-                [goals.firebaseStagingDeploy],
-                [goals.fetchStaging, goals.stagingApproval],
-                [goals.releaseTag, goals.firebaseProductionDeploy],
-                [goals.fetchProduction, goals.release, goals.incrementVersion],
+                queue,
+                version,
+                shadowCljsTest,
+                shadowCljs,
+                tag,
             ],
         },
         webpack: {
             test: [WebPackPushTest],
             goals: [
-                goals.queue,
-                goals.autofix,
-                goals.version,
-                goals.webpack,
-                [goals.codeInspection, goals.htmltest],
-                goals.tag,
+                queue,
+                version,
+                webpack,
+                [htmlValidator, htmltest],
+                tag,
             ],
         },
-        webpackDeploy: {
-            dependsOn: [goals.tag],
-            test: [WebPackPushTest, FirebasePushTest, ToDefaultBranch],
+        deploy: {
+            dependsOn: [tag],
+            test: [FirebasePushTest, ToDefaultBranch],
             goals: [
-                [goals.firebaseStagingDeploy],
-                [goals.fetchStaging, goals.stagingApproval],
-                [goals.releaseTag, goals.firebaseProductionDeploy],
-                [goals.fetchProduction, goals.release, goals.incrementVersion],
+                [firebaseStagingDeploy],
+                [firebaseProductionDeploy],
+                [releaseTag],
+                [incrementVersion],
             ],
         },
         webStatic: {
             test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],
             goals: [
-                goals.queue,
-                goals.firebaseDeploy,
-                goals.fetchProduction,
+                queue,
+                firebaseDeploy,
             ],
         },
     };
