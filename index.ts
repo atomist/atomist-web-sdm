@@ -59,7 +59,7 @@ export const configuration = configure(async sdm => {
                     "if [[ -f VERSION ]]; then v=$(< VERSION); " +
                     "elif [[ -f package.json ]]; then v=$(npx -c 'echo $npm_package_version'); " +
                     "else echo 'No version file found'; v=0.0.0; fi; " +
-                    "b=$(echo '${branch}' | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
+                    "b=$(echo \"$ATOMIST_BRANCH\" | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
                     "d=$(date -u +%Y%m%d%H%M%S); " +
                     "p=$v-$b.$d; " +
                     `printf -v r '{"SdmGoal":{"push":{"after":{"version":"%s"}}}}' "$p"; ` +
@@ -380,14 +380,14 @@ export const configuration = configure(async sdm => {
                 /* tslint:disable:no-invalid-template-strings */
                 args: [
                     "set -ex; " +
-                    "git checkout ${branch} && git pull origin ${branch}; " +
+                    'git checkout "$ATOMIST_BRANCH" && git pull origin "$ATOMIST_BRANCH"; ' +
                     "if [[ -f VERSION ]]; then " +
                     `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
                     'echo "$v" > VERSION && git add VERSION; ' +
                     "elif [[ -f package.json ]]; then npm version --no-git-tag-version patch && git add package.json; " +
                     "else echo 'No version file found'; exit 1; fi; " +
                     'printf -v m "Version: increment after release\n\n[atomist:generated]"; ' +
-                    'git commit -m "$m" && git push origin ${branch}',
+                    'git commit -m "$m" && git push origin "$ATOMIST_BRANCH"',
                 ],
                 /* tslint:enable:no-invalid-template-strings */
                 command: ["/bin/bash", "-c"],
