@@ -108,7 +108,7 @@ export const configuration = configure(async sdm => {
         ],
         output: [{
             // tslint:disable-next-line:no-invalid-template-strings
-            classifier: "${repo.owner}/${repo.name}/site",
+            classifier: "${repo.owner}/${repo.name}/${sha}/site",
             pattern: { directory: "_site" },
         }],
     });
@@ -155,11 +155,11 @@ export const configuration = configure(async sdm => {
         output: [
             /* tslint:disable:no-invalid-template-strings */
             {
-                classifier: "${repo.owner}/${repo.name}/node_modules",
+                classifier: "${repo.owner}/${repo.name}/${sha}/node_modules",
                 pattern: { directory: "node_modules" },
             },
             {
-                classifier: "${repo.owner}/${repo.name}/site",
+                classifier: "${repo.owner}/${repo.name}/${sha}/site",
                 pattern: { directory: "public" },
             },
             /* tslint:enable:no-invalid-template-strings */
@@ -207,7 +207,7 @@ export const configuration = configure(async sdm => {
         ],
         /* tslint:disable:no-invalid-template-strings */
         input: [
-            { classifier: "${repo.owner}/${repo.name}/node_modules" },
+            { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
             { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
         ],
         output: [
@@ -216,7 +216,7 @@ export const configuration = configure(async sdm => {
                 pattern: { directory: ".m2" },
             },
             {
-                classifier: "${repo.owner}/${repo.name}/node_modules",
+                classifier: "${repo.owner}/${repo.name}/${sha}/node_modules",
                 pattern: { directory: "node_modules" },
             },
         ],
@@ -264,22 +264,22 @@ export const configuration = configure(async sdm => {
         ],
         /* tslint:disable:no-invalid-template-strings */
         input: [
-            { classifier: "${repo.owner}/${repo.name}/node_modules" },
+            { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
             { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
         ],
         /* tslint:enable:no-invalid-template-strings */
         output: [
             /* tslint:disable:no-invalid-template-strings */
             {
-                classifier: "${repo.owner}/${repo.name}/site",
+                classifier: "${repo.owner}/${repo.name}/${sha}/site",
                 pattern: { directory: "public" },
             },
             {
-                classifier: "${repo.owner}/${repo.name}/server",
+                classifier: "${repo.owner}/${repo.name}/${sha}/server",
                 pattern: { globPattern: "functions/lib.js" },
             },
             {
-                classifier: "${repo.owner}/${repo.name}/config",
+                classifier: "${repo.owner}/${repo.name}/${sha}/config",
                 pattern: { globPattern: "firebase.json" },
             },
             /* tslint:enable:no-invalid-template-strings */
@@ -318,7 +318,7 @@ export const configuration = configure(async sdm => {
             },
         ],
         // tslint:disable-next-line:no-invalid-template-strings
-        input: [{ classifier: "${repo.owner}/${repo.name}/site" }],
+        input: [{ classifier: "${repo.owner}/${repo.name}/${sha}/site" }],
     });
     const htmltest = container("htmltest", {
         containers: [
@@ -333,7 +333,7 @@ export const configuration = configure(async sdm => {
             },
         ],
         // tslint:disable-next-line:no-invalid-template-strings
-        input: [{ classifier: "${repo.owner}/${repo.name}/site" }],
+        input: [{ classifier: "${repo.owner}/${repo.name}/${sha}/site" }],
     });
     const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
     const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
@@ -359,10 +359,10 @@ export const configuration = configure(async sdm => {
             ],
             /* tslint:disable:no-invalid-template-strings */
             input: [
-                { classifier: "${repo.owner}/${repo.name}/node_modules" },
-                { classifier: "${repo.owner}/${repo.name}/site" },
-                { classifier: "${repo.owner}/${repo.name}/server" },
-                { classifier: "${repo.owner}/${repo.name}/config" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/server" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
             ],
             /* tslint:disable:no-invalid-template-strings */
         },
