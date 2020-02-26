@@ -419,6 +419,13 @@ export const configuration = configure(async sdm => {
             test: [IsReleaseCommit],
             goals: ImmaterialGoals.andLock(),
         },
+        webStatic: {
+            test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],
+            goals: [
+                queue,
+                firebaseDeploy,
+            ],
+        },
         jekyll: {
             test: [JekyllPushTest],
             goals: [
@@ -451,19 +458,12 @@ export const configuration = configure(async sdm => {
         },
         deploy: {
             dependsOn: [tag],
-            test: [FirebasePushTest, ToDefaultBranch],
+            test: [not(repoSlugMatches(/^atomisthq\/s3-images$/)), FirebasePushTest, ToDefaultBranch],
             goals: [
                 [firebaseStagingDeploy],
                 [firebaseProductionDeploy],
                 [releaseTag],
                 [incrementVersion],
-            ],
-        },
-        webStatic: {
-            test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],
-            goals: [
-                queue,
-                firebaseDeploy,
             ],
         },
     };
