@@ -295,9 +295,9 @@ export const configuration = configure(async sdm => {
             {
                 args: [
                     "if [[ -d _site ]]; then site=_site; " +
-                    "elif [[ -d public ]]; then site=public; " +
+                    "elif [[ -d public ]]; then site=public; vnu_args=--also-check-css; " +
                     `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
-                    '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-css --also-check-svg "$site"',
+                    '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args "$site"',
                 ],
                 command: ["/bin/bash", "-c"],
                 image: "validator/validator:latest",
