@@ -412,6 +412,21 @@ export const configuration = configure(async sdm => {
                 },
             },
         ],
+        initContainers: [
+            {
+                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                command: ["/bin/sh", "-c"],
+                image: "busybox:1.31.1",
+                name: "chown",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                    runAsGroup: 0,
+                    runAsNonRoot: false,
+                    runAsUser: 0,
+                },
+            },
+        ],
     });
 
     return {
