@@ -391,7 +391,7 @@ export const configuration = configure(async sdm => {
                 ],
                 /* tslint:enable:no-invalid-template-strings */
                 command: ["/bin/bash", "-c"],
-                image: "node:12.14.1",
+                image: "atomist/sdm-base:0.4.1",
                 name: "version",
                 resources: {
                     limits: {
@@ -406,15 +406,15 @@ export const configuration = configure(async sdm => {
                 securityContext: {
                     allowPrivilegeEscalation: false,
                     privileged: false,
-                    runAsGroup: 1000,
+                    runAsGroup: 2866,
                     runAsNonRoot: true,
-                    runAsUser: 1000,
+                    runAsUser: 2866,
                 },
             },
         ],
         initContainers: [
             {
-                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                args: ['chown -Rh 2866:2866 "$ATOMIST_PROJECT_DIR"'],
                 command: ["/bin/sh", "-c"],
                 image: "busybox:1.31.1",
                 name: "chown",
