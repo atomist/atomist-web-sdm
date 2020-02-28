@@ -380,6 +380,8 @@ export const configuration = configure(async sdm => {
                 /* tslint:disable:no-invalid-template-strings */
                 args: [
                     "set -ex; " +
+                    'git config --global user.email "bot@atomist.com"; ' +
+                    'git config --global user.name "Atomist Bot"; ' +
                     'git checkout "$ATOMIST_BRANCH" && git pull origin "$ATOMIST_BRANCH"; ' +
                     "if [[ -f VERSION ]]; then " +
                     `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
