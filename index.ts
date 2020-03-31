@@ -25,7 +25,10 @@ import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
-import { not } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
+import {
+    not,
+    or,
+} from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
 import {
     FirebasePushTest,
@@ -452,7 +455,7 @@ export const configuration = configure(async sdm => {
             ],
         },
         shadowCljs: {
-            test: [not(repoSlugMatches(/^atomisthq\/admin-app$/)), ShadowCljsPushTest],
+            test: [not(repoSlugMatches(/^(?:atomist-skills/.*|atomisthq\/admin-app)$/)), ShadowCljsPushTest],
             goals: [
                 queue,
                 version,
