@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Implement webpack delivery. [90eee5f](https://github.com/atomist/atomist-web-sdm/commit/90eee5f8a1d4c3d52cc32ad984043eca565ba5a9)
 -   Add shadow-cljs build. [#1](https://github.com/atomist/atomist-web-sdm/issues/1)
+-   Add push test to skip shadow-cljs builds in atomist-skills org. [#12](https://github.com/atomist/atomist-web-sdm/issues/12)
 
 ### Changed
 
