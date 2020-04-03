@@ -1,0 +1,188 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>&quot;index&quot; | @atomist/atomist-web-sdm</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@atomist/atomist-web-sdm</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="_index_.html">&quot;index&quot;</a>
+				</li>
+			</ul>
+			<h1>External module &quot;index&quot;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module"><a href="_index_.html#configuration" class="tsd-kind-icon">configuration</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
+					<a name="configuration" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> configuration</h3>
+					<div class="tsd-signature tsd-kind-icon">configuration<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Configuration</span><span class="tsd-signature-symbol"> = configure(async sdm &#x3D;&gt; {sdm.addExtensionPacks(gcpSupport(),githubGoalStatusSupport(),goalStateSupport({cancellation: {enabled: true,},}),k8sGoalSchedulingSupport(),);const queue &#x3D; new Queue({ concurrent: 5 });const version &#x3D; container(&quot;version&quot;, {containers: [{/* tslint:disable:no-invalid-template-strings */args: [&quot;set -ex; &quot; +&quot;if [[ -f VERSION ]]; then v&#x3D;$(&lt; VERSION); &quot; +&quot;elif [[ -f package.json ]]; then v&#x3D;$(npx -c &#x27;echo $npm_package_version&#x27;); &quot; +&quot;else echo &#x27;No version file found&#x27;; v&#x3D;0.0.0; fi; &quot; +&quot;b&#x3D;$(echo \&quot;$ATOMIST_BRANCH\&quot; | sed -e &#x27;s/[/_]/-/g&#x27; -e &#x27;s/[^-A-Za-z0-9.]//g&#x27; -e &#x27;s/--*/-/g&#x27; -e &#x27;s/-$//&#x27;); &quot; +&quot;d&#x3D;$(date -u +%Y%m%d%H%M%S); &quot; +&quot;p&#x3D;$v-$b.$d; &quot; +&#x60;printf -v r &#x27;{&quot;SdmGoal&quot;:{&quot;push&quot;:{&quot;after&quot;:{&quot;version&quot;:&quot;%s&quot;}}}}&#x27; &quot;$p&quot;; &#x60; +&#x27;echo &quot;$r&quot; &gt; &quot;$ATOMIST_RESULT&quot;&#x27;,],/* tslint:enable:no-invalid-template-strings */command: [&quot;/bin/bash&quot;, &quot;-c&quot;],image: &quot;node:12.14.1&quot;,name: &quot;version&quot;,resources: {limits: {cpu: &quot;1000m&quot;,memory: &quot;256Mi&quot;,},requests: {cpu: &quot;100m&quot;,memory: &quot;256Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 1000,runAsNonRoot: true,runAsUser: 1000,},},],});const tag &#x3D; new Tag();const releaseTag &#x3D; new Tag().with({name: &quot;release-tag&quot;,goalExecutor: executeTag({ release: true }),});const jekyll &#x3D; container(&quot;jekyll&quot;, {containers: [{args: [&quot;jekyll&quot;, &quot;build&quot;],image: &quot;atomist/web-site-build:0.1.0&quot;,name: &quot;jekyll&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,},},],output: [{// tslint:disable-next-line:no-invalid-template-stringsclassifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot;,pattern: { directory: &quot;_site&quot; },}],});const webpack &#x3D; container(&quot;webpack&quot;, {containers: [{args: [&quot;npm ci --progress&#x3D;false &amp;&amp; npm run --if-present compile &amp;&amp; npm test&quot;],command: [&quot;bash&quot;, &quot;-c&quot;],env: [{ name: &quot;NODE_ENV&quot;, value: &quot;development&quot; }],image: &quot;node:12.13.0&quot;,name: &quot;webpack&quot;,resources: {limits: {cpu: &quot;1000m&quot;,memory: &quot;2560Mi&quot;,},requests: {cpu: &quot;100m&quot;,memory: &quot;2048Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 1000,runAsNonRoot: true,runAsUser: 1000,},},],initContainers: [{args: [&#x27;chown -Rh 1000:1000 &quot;$ATOMIST_PROJECT_DIR&quot;&#x27;],command: [&quot;/bin/sh&quot;, &quot;-c&quot;],image: &quot;busybox:1.31.1&quot;,name: &quot;chown&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 0,runAsNonRoot: false,runAsUser: 0,},},],output: [/* tslint:disable:no-invalid-template-strings */{classifier: &quot;${repo.owner}/${repo.name}/${sha}/node_modules&quot;,pattern: { directory: &quot;node_modules&quot; },},{classifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot;,pattern: { directory: &quot;public&quot; },},/* tslint:enable:no-invalid-template-strings */],});const shadowCljsTest &#x3D; container(&quot;shadowcljs-test&quot;, {containers: [{args: [&quot;npm ci --progress&#x3D;false &amp;&amp; npm run test&quot;],command: [&quot;bash&quot;, &quot;-c&quot;],env: [{ name: &quot;NODE_ENV&quot;, value: &quot;development&quot; }],image: &quot;atomist/shadow-cljs:0.1.0&quot;,name: &quot;shadowcljs-test&quot;,resources: {limits: {cpu: &quot;1000m&quot;,memory: &quot;2048Mi&quot;,},requests: {cpu: &quot;100m&quot;,memory: &quot;1024Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 1000,runAsNonRoot: true,runAsUser: 1000,},},],initContainers: [{args: [&#x27;chown -Rh 1000:1000 &quot;$ATOMIST_PROJECT_DIR&quot;&#x27;],command: [&quot;/bin/sh&quot;, &quot;-c&quot;],image: &quot;busybox:1.31.1&quot;,name: &quot;chown&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 0,runAsNonRoot: false,runAsUser: 0,},},],/* tslint:disable:no-invalid-template-strings */input: [{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/node_modules&quot; },{ classifier: &quot;${repo.owner}/${repo.name}/mvn/cache&quot; },],output: [{classifier: &quot;${repo.owner}/${repo.name}/mvn/cache&quot;,pattern: { directory: &quot;.m2&quot; },},{classifier: &quot;${repo.owner}/${repo.name}/${sha}/node_modules&quot;,pattern: { directory: &quot;node_modules&quot; },},],/* tslint:enable:no-invalid-template-strings */});const shadowCljs &#x3D; container(&quot;shadowcljs&quot;, {containers: [{args: [&quot;npm run release&quot;],command: [&quot;bash&quot;, &quot;-c&quot;],env: [{ name: &quot;NODE_ENV&quot;, value: &quot;development&quot; }],image: &quot;atomist/shadow-cljs:0.1.0&quot;,name: &quot;shadowcljs&quot;,resources: {limits: {cpu: &quot;1000m&quot;,memory: &quot;2048Mi&quot;,},requests: {cpu: &quot;100m&quot;,memory: &quot;1024Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 1000,runAsNonRoot: true,runAsUser: 1000,},},],initContainers: [{args: [&#x27;chown -Rh 1000:1000 &quot;$ATOMIST_PROJECT_DIR&quot;&#x27;],command: [&quot;/bin/sh&quot;, &quot;-c&quot;],image: &quot;busybox:1.31.1&quot;,name: &quot;chown&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 0,runAsNonRoot: false,runAsUser: 0,},},],/* tslint:disable:no-invalid-template-strings */input: [{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/node_modules&quot; },{ classifier: &quot;${repo.owner}/${repo.name}/mvn/cache&quot; },],output: [{classifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot;,pattern: { directory: &quot;public&quot; },},{classifier: &quot;${repo.owner}/${repo.name}/${sha}/server&quot;,pattern: { globPattern: &quot;functions/lib.js&quot; },},{classifier: &quot;${repo.owner}/${repo.name}/${sha}/config&quot;,pattern: { globPattern: &quot;firebase.json&quot; },},],/* tslint:enable:no-invalid-template-strings */});const htmlValidator &#x3D; container(&quot;htmlvalidator&quot;, {containers: [{args: [&quot;if [[ -d _site ]]; then site&#x3D;_site; &quot; +&quot;elif [[ -d public ]]; then site&#x3D;public; vnu_args&#x3D;--also-check-css; &quot; +&#x60;else echo &quot;Unsupported project: site neither &#x27;_site&#x27; nor &#x27;public&#x27;&quot; 1&gt;&amp;2; exit 1; fi; &#x60; +&#x27;/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args &quot;$site&quot;&#x27;,],command: [&quot;/bin/bash&quot;, &quot;-c&quot;],image: &quot;validator/validator:latest&quot;,name: &quot;nu&quot;,resources: {limits: {cpu: &quot;2000m&quot;,memory: &quot;1024Mi&quot;,},requests: {cpu: &quot;500m&quot;,memory: &quot;768Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,readOnlyRootFilesystem: true,runAsGroup: 65534,runAsNonRoot: true,runAsUser: 65534,},},],// tslint:disable-next-line:no-invalid-template-stringsinput: [{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot; }],});const htmltest &#x3D; container(&quot;htmltest&quot;, {containers: [{args: [&quot;htmltest&quot;],image: &quot;wjdp/htmltest:v0.12.0&quot;,name: &quot;htmltest&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,},},],// tslint:disable-next-line:no-invalid-template-stringsinput: [{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot; }],});const firebaseToken: string | undefined &#x3D; sdm.configuration.sdm.firebase?.token;const firebaseTokenArgs &#x3D; (firebaseToken) ? [&#x60;--token&#x3D;${firebaseToken}&#x60;] : [];const firebaseImage &#x3D; &quot;andreysenov/firebase-tools:7.4.0&quot;;const firebaseDeploy &#x3D; container(&quot;firebase-deploy&quot;, {containers: [{args: [&quot;firebase&quot;, &quot;--non-interactive&quot;, &quot;deploy&quot;, ...firebaseTokenArgs],image: firebaseImage,name: &quot;firebase&quot;,},],});const [firebaseStagingDeploy, firebaseProductionDeploy] &#x3D; [&quot;staging&quot;, &quot;production&quot;].map(env &#x3D;&gt; container(&#x60;firebase-${env}-deploy&#x60;,{containers: [{args: [&quot;firebase&quot;, &quot;--non-interactive&quot;, &#x60;--project&#x3D;${env}&#x60;, &quot;deploy&quot;, ...firebaseTokenArgs],image: firebaseImage,name: &quot;firebase&quot;,},],/* tslint:disable:no-invalid-template-strings */input: [{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/node_modules&quot; },{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/site&quot; },{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/server&quot; },{ classifier: &quot;${repo.owner}/${repo.name}/${sha}/config&quot; },],/* tslint:disable:no-invalid-template-strings */},));firebaseProductionDeploy.definition.preApprovalRequired &#x3D; true;const incrementVersion &#x3D; container(&quot;increment-version&quot;, {containers: [{/* tslint:disable:no-invalid-template-strings */args: [&quot;set -ex; &quot; +&#x27;git checkout &quot;$ATOMIST_BRANCH&quot; &amp;&amp; git pull origin &quot;$ATOMIST_BRANCH&quot;; &#x27; +&quot;if [[ -f VERSION ]]; then &quot; +&#x60;v&#x3D;$(awk -F. &#x27;{ p &#x3D; $3 + 1; print $1 &quot;.&quot; $2 &quot;.&quot; p }&#x27; &lt; VERSION); &#x60; +&#x27;echo &quot;$v&quot; &gt; VERSION &amp;&amp; git add VERSION; &#x27; +&quot;elif [[ -f package.json ]]; then npm version --no-git-tag-version patch &amp;&amp; git add package.json; &quot; +&quot;else echo &#x27;No version file found&#x27;; exit 1; fi; &quot; +&#x27;printf -v m &quot;Version: increment after release\n\n[atomist:generated]&quot;; &#x27; +&#x27;git commit -m &quot;$m&quot; &amp;&amp; git push origin &quot;$ATOMIST_BRANCH&quot;&#x27;,],/* tslint:enable:no-invalid-template-strings */command: [&quot;/bin/bash&quot;, &quot;-c&quot;],image: &quot;atomist/sdm-base:0.4.1&quot;,name: &quot;version&quot;,resources: {limits: {cpu: &quot;1000m&quot;,memory: &quot;256Mi&quot;,},requests: {cpu: &quot;100m&quot;,memory: &quot;256Mi&quot;,},},securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 2866,runAsNonRoot: true,runAsUser: 2866,},},],initContainers: [{args: [&#x27;chown -Rh 2866:2866 &quot;$ATOMIST_PROJECT_DIR&quot;&#x27;],command: [&quot;/bin/sh&quot;, &quot;-c&quot;],image: &quot;busybox:1.31.1&quot;,name: &quot;chown&quot;,securityContext: {allowPrivilegeEscalation: false,privileged: false,runAsGroup: 0,runAsNonRoot: false,runAsUser: 0,},},],});return {immaterial: {test: [IsReleaseCommit],goals: ImmaterialGoals.andLock(),},webStatic: {test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],goals: [queue,firebaseDeploy,],},jekyll: {test: [JekyllPushTest],goals: [queue,version,jekyll,htmltest,[htmlValidator, tag],],},shadowCljs: {test: [not(repoSlugMatches(/^(?:atomist-skills\/.*|atomisthq\/admin-app|atomisthq\/.*-skill)$/)), ShadowCljsPushTest],goals: [queue,version,shadowCljsTest,shadowCljs,tag,],},webpack: {test: [WebPackPushTest],goals: [queue,version,webpack,htmltest,[htmlValidator, tag],],},deploy: {dependsOn: [tag],test: [not(repoSlugMatches(/^atomisthq\/s3-images$/)), FirebasePushTest, ToDefaultBranch],goals: [[firebaseStagingDeploy],[firebaseProductionDeploy],[releaseTag],[incrementVersion],],},};}, machineOptions)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/atomist/atomist-web-sdm/blob/ffa7854/index.ts#L39">index.ts:39</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-external-module">
+						<a href="_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_lib_configure_.html">&quot;lib/configure&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_lib_pushtest_.html">&quot;lib/push<wbr>Test&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="_index_.html#configuration" class="tsd-kind-icon">configuration</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
