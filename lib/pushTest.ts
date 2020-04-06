@@ -61,3 +61,12 @@ export const IsReleaseCommit: PushTest = {
         return versionRegexp.test(commitMessage) || changelogRegexp.test(commitMessage);
     },
 };
+
+export const IsChangelogCommit: PushTest = {
+    name: "IsChangelogCommit",
+    mapping: async pi => {
+        const commitMessage = (pi.push.after && pi.push.after.message) ? pi.push.after.message : "";
+        const changelogCommitRegexp = /Changelog:\s\#[\d+]+\sto\s([\w]+[,]?[\s]?)+/;
+        return changelogCommitRegexp.test(commitMessage);
+    },
+};
