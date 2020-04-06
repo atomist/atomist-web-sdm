@@ -22,6 +22,7 @@ import { githubGoalStatusSupport } from "@atomist/sdm-core/lib/pack/github-goal-
 import { goalStateSupport } from "@atomist/sdm-core/lib/pack/goal-state/goalState";
 import { k8sGoalSchedulingSupport } from "@atomist/sdm-core/lib/pack/k8s/goalScheduling";
 import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
+import { Cancel } from "@atomist/sdm/lib/api/goal/common/Cancel";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
@@ -29,6 +30,7 @@ import { not } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
 import {
     FirebasePushTest,
+    IsChangelogCommit,
     IsReleaseCommit,
     JekyllPushTest,
     repoSlugMatches,
@@ -50,6 +52,7 @@ export const configuration = configure(async sdm => {
     );
 
     const queue = new Queue({ concurrent: 5 });
+    const cancel = new Cancel();
     const version = container("version", {
         containers: [
             {
@@ -431,7 +434,7 @@ export const configuration = configure(async sdm => {
 
     return {
         immaterial: {
-            test: [IsReleaseCommit],
+            test: [IsReleaseCommit, IsChangelogCommit],
             goals: ImmaterialGoals.andLock(),
         },
         webStatic: {
@@ -455,6 +458,7 @@ export const configuration = configure(async sdm => {
             test: [not(repoSlugMatches(/^(?:atomist-skills\/.*|atomisthq\/admin-app|atomisthq\/.*-skill)$/)), ShadowCljsPushTest],
             goals: [
                 queue,
+                cancel,
                 version,
                 shadowCljsTest,
                 shadowCljs,
