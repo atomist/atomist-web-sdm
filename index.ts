@@ -22,7 +22,7 @@ import { githubGoalStatusSupport } from "@atomist/sdm-core/lib/pack/github-goal-
 import { goalStateSupport } from "@atomist/sdm-core/lib/pack/goal-state/goalState";
 import { k8sGoalSchedulingSupport } from "@atomist/sdm-core/lib/pack/k8s/goalScheduling";
 import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
-import {Cancel} from "@atomist/sdm/lib/api/goal/common/Cancel";
+import { Cancel } from "@atomist/sdm/lib/api/goal/common/Cancel";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";

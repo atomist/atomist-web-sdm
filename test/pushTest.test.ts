@@ -15,9 +15,12 @@
  */
 
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
-import {StatefulPushListenerInvocation} from "@atomist/sdm/lib/api/dsl/goalContribution";
+import { StatefulPushListenerInvocation } from "@atomist/sdm/lib/api/dsl/goalContribution";
 import * as assert from "power-assert";
-import {FirebasePushTest, IsChangelogCommit} from "../lib/pushTest";
+import {
+    FirebasePushTest,
+    IsChangelogCommit,
+} from "../lib/pushTest";
 
 describe("pushTests", () => {
     describe("FirebaseConfiguration", () => {
