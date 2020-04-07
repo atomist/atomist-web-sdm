@@ -26,7 +26,10 @@ import { Cancel } from "@atomist/sdm/lib/api/goal/common/Cancel";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
-import {not, or} from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
+import {
+    not,
+    or,
+} from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
 import {
     FirebasePushTest,
