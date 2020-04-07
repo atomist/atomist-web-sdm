@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Enable cancel goal for shadow builds, ignore Changelog commits. [#15](https://github.com/atomist/atomist-web-sdm/issues/15)
 
+### Fixed
+
+-   Fix immaterial check. [#17](https://github.com/atomist/atomist-web-sdm/issues/17)
+
 ## [0.3.0](https://github.com/atomist/atomist-web-sdm/compare/0.1.0...0.3.0) - 2020-04-03
 
 ### Added
