@@ -30,7 +30,7 @@ export const FirebasePushTest = predicatePushTest(
 /** Test for AppEngine configuration file in project. */
 export const AppEnginePushTest = predicatePushTest(
     "HasAppEngineConfiguration",
-    async p => fileExists(p, "app.yaml"));
+    async p => fileExists(p, ["app.yaml", "app.*.yaml"]));
 
 /** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");
