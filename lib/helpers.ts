@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import {GoalProjectListenerEvent, GoalProjectListenerRegistration} from "@atomist/sdm/lib/api/goal/GoalInvocation";
+import {
+    GoalProjectListenerEvent,
+    GoalProjectListenerRegistration,
+} from "@atomist/sdm/lib/api/goal/GoalInvocation";
 
 export const extractAppEngineUrl = (input: string) => {
     const re = /Deployed service \[\w+\] to \[(.*)\]/;

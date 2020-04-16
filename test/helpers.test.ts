@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import {extractAppEngineUrl} from "../lib/helpers";
+import { extractAppEngineUrl } from "../lib/helpers";
 
 describe("appEngineTests", () => {
     it("should extract app engine url from deployment output", () => {
