@@ -31,7 +31,7 @@ import {
     or,
 } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
-import { appEngineListener } from "./lib/helpers";
+import {appEngineEphemeral, appEngineListener} from "./lib/helpers";
 import {
     AppEnginePushTest,
     FirebasePushTest,
@@ -390,6 +390,7 @@ export const configuration = configure(async sdm => {
         },
     ).withProjectListener(appEngineListener));
     appEngineProductionDeploy.definition.preApprovalRequired = true;
+
     const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
         `firebase-${env}-deploy`,
         {
@@ -509,6 +510,11 @@ export const configuration = configure(async sdm => {
                 htmltest,
                 [htmlValidator, tag],
             ],
+        },
+        deployAppEngineTesting: {
+            dependsOn: [tag],
+            test: [not(ToDefaultBranch), AppEnginePushTest],
+            goals: [appEngineEphemeral],
         },
         deploy: {
             dependsOn: [tag],

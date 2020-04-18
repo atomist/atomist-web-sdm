@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import {configurationValue} from "@atomist/automation-client/lib/configuration";
+import {Container, ContainerRegistration} from "@atomist/sdm-core/lib/goal/container/container";
+import {readSdmVersion} from "@atomist/sdm-core/lib/internal/delivery/build/local/projectVersioner";
 import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
@@ -25,13 +28,37 @@ export const extractAppEngineUrl = (input: string) => {
     return match ? match[1] : undefined;
 };
 
+export const appEngineVersioner: GoalProjectListenerRegistration = {
+    name: "AppEngineVersioner",
+    events: [GoalProjectListenerEvent.before],
+    listener: async (p, gi) => {
+        const v = await readSdmVersion(
+            gi.goalEvent.repo.owner,
+            gi.goalEvent.repo.name,
+            gi.goalEvent.repo.providerId,
+            gi.goalEvent.sha,
+            gi.goalEvent.branch,
+            gi.context);
+        const version = v ? v.replace(/\./g, "-").substr(0, 30) : `${gi.goalEvent.branch}-${gi.goalEvent.sha}`.substr(0, 30);
+        await p.addFile("gae-version", version);
+    },
+};
+
 export const appEngineListener: GoalProjectListenerRegistration = {
     name: "AppEngineListener",
     events: [GoalProjectListenerEvent.after],
     listener: async (p, r) => {
         let data = {};
+        let url;
         if (r.progressLog.log) {
-            const url = extractAppEngineUrl(r.progressLog.log);
+            if (r.goalEvent.uniqueName.startsWith("container-appEngine-production-deploy")) {
+                url = configurationValue<string>("sdm.webapp.urls.prod");
+            } else {
+                const extracted = extractAppEngineUrl(r.progressLog.log);
+                if (extracted) {
+                    url = extracted.replace(/(\w+).(\w+).appspot.com/, configurationValue<string>("sdm.webapp.urls.staging"));
+                }
+            }
             if (url) {
                 data = {
                     externalUrls: [{url}],
@@ -41,3 +68,33 @@ export const appEngineListener: GoalProjectListenerRegistration = {
         return data;
     },
 };
+
+export const gcloudSdkImage = "google/cloud-sdk:289.0.0";
+const registration: ContainerRegistration = {
+    containers: [
+        {
+            name: "gcloudSdk",
+            image: gcloudSdkImage,
+            command: ["/bin/bash", "-c"],
+            args: [
+                "set -ex; " +
+                `gcloud app deploy app.staging.yaml --quiet --project=atomist-new-web-app-staging --version=$(cat gae-version) --no-promote; `,
+            ],
+        },
+    ],
+    /* tslint:disable:no-invalid-template-strings */
+    input: [
+        { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
+        { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
+        { classifier: "${repo.owner}/${repo.name}/${sha}/server-express" },
+        { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
+    ],
+    /* tslint:disable:no-invalid-template-strings */
+};
+export const appEngineEphemeral = new Container({
+    displayName: `AppEngine Ephemeral Deployment`,
+    preApproval: true,
+})
+    .with(registration)
+    .withProjectListener(appEngineVersioner)
+    .withProjectListener(appEngineListener);
