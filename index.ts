@@ -32,6 +32,11 @@ import {
 } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
 import {
+    appEngineEphemeral,
+    appEngineListener,
+} from "./lib/helpers";
+import {
+    AppEnginePushTest,
     FirebasePushTest,
     IsChangelogCommit,
     IsReleaseCommit,
@@ -290,6 +295,10 @@ export const configuration = configure(async sdm => {
                 pattern: { globPattern: "functions/lib.js" },
             },
             {
+                classifier: "${repo.owner}/${repo.name}/${sha}/server-express",
+                pattern: { globPattern: "server/lib.js" },
+            },
+            {
                 classifier: "${repo.owner}/${repo.name}/${sha}/config",
                 pattern: { globPattern: "firebase.json" },
             },
@@ -358,6 +367,33 @@ export const configuration = configure(async sdm => {
             },
         ],
     });
+    const gcloudSdkImage = "google/cloud-sdk:289.0.0";
+    const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env => container(
+        `appEngine-${env}-deploy`,
+        {
+            containers: [
+                {
+                    name: "gcloudSdk",
+                    image: gcloudSdkImage,
+                    command: ["/bin/bash", "-c"],
+                    args: [
+                        "set -ex; " +
+                        `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env}; `,
+                    ],
+                },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+            input: [
+                { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/server-express" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+        },
+    ).withProjectListener(appEngineListener));
+    appEngineProductionDeploy.definition.preApprovalRequired = true;
+
     const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
         `firebase-${env}-deploy`,
         {
@@ -478,6 +514,11 @@ export const configuration = configure(async sdm => {
                 [htmlValidator, tag],
             ],
         },
+        deployAppEngineTesting: {
+            dependsOn: [tag],
+            test: [not(ToDefaultBranch), AppEnginePushTest],
+            goals: [appEngineEphemeral],
+        },
         deploy: {
             dependsOn: [tag],
             test: [not(repoSlugMatches(/^atomisthq\/s3-images$/)), FirebasePushTest, ToDefaultBranch],
@@ -486,6 +527,16 @@ export const configuration = configure(async sdm => {
                 [firebaseProductionDeploy],
                 [releaseTag],
                 [incrementVersion],
+            ],
+        },
+        deployAppEngine: {
+            dependsOn: [tag],
+            test: [AppEnginePushTest, ToDefaultBranch],
+            goals: [
+                appEngineStagingDeploy,
+                appEngineProductionDeploy,
+                releaseTag,
+                incrementVersion,
             ],
         },
     };

@@ -57,7 +57,7 @@
     },
     "max-file-line-count": {
       "severity": "warning",
-      "options": [500]
+      "options": [600]
     },
     "max-line-length": {
       "severity": "warning",

@@ -18,6 +18,7 @@ import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMe
 import { StatefulPushListenerInvocation } from "@atomist/sdm/lib/api/dsl/goalContribution";
 import * as assert from "power-assert";
 import {
+    AppEnginePushTest,
     FirebasePushTest,
     IsChangelogCommit,
 } from "../lib/pushTest";
@@ -78,6 +79,18 @@ describe("pushTests", () => {
             } as any;
             const result = await IsChangelogCommit.mapping(pi);
             assert.strictEqual(result, false);
+        });
+    });
+    describe("IsAppEnginePush", () => {
+        it("should return true when app.yaml exists at root of project", async () => {
+            const p = InMemoryProject.of({ path: "app.yaml", content: "" });
+            const result = await AppEnginePushTest.predicate(p);
+            assert(result);
+        });
+        it("should return false when app.yaml doesn't exist on root", async () => {
+            const p = InMemoryProject.of({ path: "not/root/path/app.yaml", content: "" });
+            const result = await AppEnginePushTest.predicate(p);
+            assert(!result);
         });
     });
 });
