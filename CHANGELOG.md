@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Enable cancel goal for shadow builds, ignore Changelog commits. [#15](https://github.com/atomist/atomist-web-sdm/issues/15)
+-   Add deployment Goals for AppEngine. [#20](https://github.com/atomist/atomist-web-sdm/issues/20)
 
 ### Fixed
 
