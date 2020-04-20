@@ -19,7 +19,6 @@ import {
     Container,
     ContainerRegistration,
 } from "@atomist/sdm-core/lib/goal/container/container";
-import { readSdmVersion } from "@atomist/sdm-core/lib/internal/delivery/build/local/projectVersioner";
 import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
@@ -35,14 +34,8 @@ export const appEngineVersioner: GoalProjectListenerRegistration = {
     name: "AppEngineVersioner",
     events: [GoalProjectListenerEvent.before],
     listener: async (p, gi) => {
-        const v = await readSdmVersion(
-            gi.goalEvent.repo.owner,
-            gi.goalEvent.repo.name,
-            gi.goalEvent.repo.providerId,
-            gi.goalEvent.sha,
-            gi.goalEvent.branch,
-            gi.context);
-        const version = v ? v.replace(/\./g, "-").substr(0, 30) : `${gi.goalEvent.branch}-${gi.goalEvent.sha}`.substr(0, 30);
+        const shortSha = gi.goalEvent.sha.substr(0, 7);
+        const version = `${shortSha}-${gi.goalEvent.branch}`.substr(0, 30);
         await p.addFile("gae-version", version);
     },
 };
