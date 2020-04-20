@@ -31,7 +31,10 @@ import {
     or,
 } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
-import {appEngineEphemeral, appEngineListener} from "./lib/helpers";
+import {
+    appEngineEphemeral,
+    appEngineListener,
+} from "./lib/helpers";
 import {
     AppEnginePushTest,
     FirebasePushTest,

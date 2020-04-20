@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import {configurationValue} from "@atomist/automation-client/lib/configuration";
-import {Container, ContainerRegistration} from "@atomist/sdm-core/lib/goal/container/container";
-import {readSdmVersion} from "@atomist/sdm-core/lib/internal/delivery/build/local/projectVersioner";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import {
+    Container,
+    ContainerRegistration,
+} from "@atomist/sdm-core/lib/goal/container/container";
+import { readSdmVersion } from "@atomist/sdm-core/lib/internal/delivery/build/local/projectVersioner";
 import {
     GoalProjectListenerEvent,
     GoalProjectListenerRegistration,
