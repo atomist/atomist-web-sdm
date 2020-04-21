@@ -69,7 +69,7 @@ export const gcloudSdkImage = "google/cloud-sdk:289.0.0";
 const registration: ContainerRegistration = {
     containers: [
         {
-            name: "gcloudSdk",
+            name: "gcloud-sdk",
             image: gcloudSdkImage,
             command: ["/bin/bash", "-c"],
             args: [
