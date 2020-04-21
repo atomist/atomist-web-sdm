@@ -373,7 +373,7 @@ export const configuration = configure(async sdm => {
         {
             containers: [
                 {
-                    name: "gcloudSdk",
+                    name: "gcloud-sdk",
                     image: gcloudSdkImage,
                     command: ["/bin/bash", "-c"],
                     args: [
