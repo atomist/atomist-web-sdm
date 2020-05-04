@@ -240,7 +240,7 @@ export const configuration = configure(async sdm => {
     const shadowCljs = container("shadowcljs", {
         containers: [
             {
-                args: ["npm run release"],
+                args: ["npm ci --progress=false && npm run release"],
                 command: ["bash", "-c"],
                 env: [{ name: "NODE_ENV", value: "development" }],
                 image: "atomist/shadow-cljs:0.1.0",
