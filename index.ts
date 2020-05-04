@@ -32,7 +32,6 @@ import {
 } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
 import {
-    appEngineEphemeral,
     appEngineListener,
 } from "./lib/helpers";
 import {
@@ -499,8 +498,7 @@ export const configuration = configure(async sdm => {
                 queue,
                 cancel,
                 version,
-                shadowCljsTest,
-                shadowCljs,
+                [shadowCljsTest, shadowCljs],
                 tag,
             ],
         },
@@ -513,11 +511,6 @@ export const configuration = configure(async sdm => {
                 htmltest,
                 [htmlValidator, tag],
             ],
-        },
-        deployAppEngineTesting: {
-            dependsOn: [tag],
-            test: [not(ToDefaultBranch), AppEnginePushTest],
-            goals: [appEngineEphemeral],
         },
         deploy: {
             dependsOn: [tag],
