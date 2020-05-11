@@ -472,13 +472,15 @@ export const configuration = configure(async sdm => {
         ],
     });
 
+    const simpleDeployRegExp = /^atomisthq\/(?:blog|s3-images)$/;
+
     return {
         immaterial: {
             test: or(IsReleaseCommit, IsChangelogCommit),
             goals: ImmaterialGoals.andLock(),
         },
         webStatic: {
-            test: [repoSlugMatches(/^atomisthq\/(?:blog|s3-images)$/), ToDefaultBranch],
+            test: [repoSlugMatches(simpleDeployRegExp), ToDefaultBranch],
             goals: [
                 queue,
                 firebaseDeploy,
@@ -516,7 +518,7 @@ export const configuration = configure(async sdm => {
         },
         deploy: {
             dependsOn: [tag],
-            test: [not(repoSlugMatches(/^atomisthq\/s3-images$/)), FirebasePushTest, ToDefaultBranch],
+            test: [not(repoSlugMatches(simpleDeployRegExp)), FirebasePushTest, ToDefaultBranch],
             goals: [
                 [firebaseStagingDeploy],
                 [firebaseProductionDeploy],
