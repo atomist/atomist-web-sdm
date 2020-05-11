@@ -45,6 +45,8 @@ import {
     WebPackPushTest,
 } from "./lib/pushTest";
 
+/* tslint:disable:max-file-line-count */
+
 export const configuration = configure(async sdm => {
 
     sdm.addExtensionPacks(
@@ -476,7 +478,7 @@ export const configuration = configure(async sdm => {
             goals: ImmaterialGoals.andLock(),
         },
         webStatic: {
-            test: [repoSlugMatches(/^atomisthq\/s3-images$/), ToDefaultBranch],
+            test: [repoSlugMatches(/^atomisthq\/(?:blog|s3-images)$/), ToDefaultBranch],
             goals: [
                 queue,
                 firebaseDeploy,
