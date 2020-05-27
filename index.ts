@@ -249,11 +249,11 @@ export const configuration = configure(async sdm => {
                 name: "shadowcljs",
                 resources: {
                     limits: {
-                        cpu: "1000m",
+                        cpu: "2000m",
                         memory: "2048Mi",
                     },
                     requests: {
-                        cpu: "100m",
+                        cpu: "1000m",
                         memory: "1024Mi",
                     },
                 },
