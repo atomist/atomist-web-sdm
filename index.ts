@@ -547,7 +547,7 @@ export const configuration = configure(async sdm => {
             ],
         },
         shadowCljs: {
-            test: [not(repoSlugMatches(/^(?:atomist-skills\/.*|atomisthq\/admin-app|atomisthq\/.*-skill)$/)), ShadowCljsPushTest],
+            test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/), ShadowCljsPushTest],
             goals: [
                 queue,
                 cancel,
