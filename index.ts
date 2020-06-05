@@ -522,7 +522,7 @@ export const configuration = configure(async sdm => {
         ],
     });
 
-    const simpleDeployRegExp = /^atomisthq\/(?:blog|s3-images)$/;
+    const simpleDeployRegExp = /^atomisthq\/(?:blog|web-static)$/;
 
     return {
         immaterial: {
