@@ -323,7 +323,7 @@ export const configuration = configure(async sdm => {
                     },
                     requests: {
                         cpu: "1000m",
-                        memory: "2048Mi",
+                        memory: "3072Mi",
                     },
                 },
                 securityContext: {
