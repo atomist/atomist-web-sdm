@@ -319,11 +319,11 @@ export const configuration = configure(async sdm => {
                 resources: {
                     limits: {
                         cpu: "2000m",
-                        memory: "2048Mi",
+                        memory: "3072Mi",
                     },
                     requests: {
                         cpu: "1000m",
-                        memory: "1024Mi",
+                        memory: "2048Mi",
                     },
                 },
                 securityContext: {
