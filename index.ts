@@ -313,7 +313,7 @@ export const configuration = configure(async sdm => {
                 args: ["npm ci --progress=false && npm run smoke-test"],
                 command: ["bash", "-c"],
                 env: [{ name: "SMOKE_TEST_BASE_URL", value: `https://${env === "production" ? sdm.configuration.sdm.webapp.urls.prod : sdm.configuration.sdm.webapp.urls.staging}`}],
-                image: "gcr.io/atomist-container-registry/ff-gecko-test-container:bd61a8a6bda07cac7c502248455d74ada1164f56",
+                image: "gcr.io/atomist-container-registry/ff-gecko-test-container:6729432f58f951aab94bfc6cdfd30ebd539c61e1",
                 name: "ff-gecko-testing",
                 pushTest: repoSlugMatches(/^atomisthq\/web-app-cljs$/),
                 resources: {
