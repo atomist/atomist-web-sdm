@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import { Tag } from "@atomist/sdm-core/lib/goal/common/Tag";
-import { container } from "@atomist/sdm-core/lib/goal/container/container";
-import { executeTag } from "@atomist/sdm-core/lib/internal/delivery/build/executeTag";
-import { configure } from "@atomist/sdm-core/lib/machine/configure";
-import { githubGoalStatusSupport } from "@atomist/sdm-core/lib/pack/github-goal-status/github";
-import { goalStateSupport } from "@atomist/sdm-core/lib/pack/goal-state/goalState";
-import { k8sGoalSchedulingSupport } from "@atomist/sdm-core/lib/pack/k8s/goalScheduling";
-import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
 import { Cancel } from "@atomist/sdm/lib/api/goal/common/Cancel";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
 import { Goals } from "@atomist/sdm/lib/api/goal/Goals";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
 import { not, or } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
+import { executeTag } from "@atomist/sdm/lib/core/delivery/build/executeTag";
+import { Tag } from "@atomist/sdm/lib/core/goal/common/Tag";
+import { container } from "@atomist/sdm/lib/core/goal/container/container";
+import { configure } from "@atomist/sdm/lib/core/machine/configure";
+import { gcpSupport } from "@atomist/sdm/lib/core/pack/gcp";
+import { githubGoalStatusSupport } from "@atomist/sdm/lib/core/pack/github-goal-status/github";
+import { goalStateSupport } from "@atomist/sdm/lib/core/pack/goal-state/goalState";
+import { k8sGoalSchedulingSupport } from "@atomist/sdm/lib/core/pack/k8s/scheduler/goalScheduling";
 import { machineOptions } from "./lib/configure";
 import { appEngineListener } from "./lib/helpers";
 import {

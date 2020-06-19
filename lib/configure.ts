@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { LocalSoftwareDeliveryMachineConfiguration } from "@atomist/sdm-core/lib/internal/machine/LocalSoftwareDeliveryMachineOptions";
-import { ConfigureMachineOptions } from "@atomist/sdm-core/lib/machine/configure";
 import { SoftwareDeliveryMachineConfiguration } from "@atomist/sdm/lib/api/machine/SoftwareDeliveryMachineOptions";
+import { LocalSoftwareDeliveryMachineConfiguration } from "@atomist/sdm/lib/core/machine/LocalSoftwareDeliveryMachineOptions";
+import { ConfigureMachineOptions } from "@atomist/sdm/lib/core/machine/configure";
 import * as _ from "lodash";
 
 /**

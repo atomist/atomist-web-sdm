@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
-import { Container, ContainerRegistration } from "@atomist/sdm-core/lib/goal/container/container";
 import { GoalProjectListenerEvent, GoalProjectListenerRegistration } from "@atomist/sdm/lib/api/goal/GoalInvocation";
+import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { Container, ContainerRegistration } from "@atomist/sdm/lib/core/goal/container/container";
 
 export const extractAppEngineUrl = (input: string): string | undefined => {
     const re = /Deployed service \[\w+\] to \[(.*)\]/;

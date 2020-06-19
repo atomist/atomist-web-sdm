@@ -25,9 +25,7 @@
   "types": "./index.d.ts",
   "dependencies": {
     "@atomist/automation-client": "2.0.0-master.20200205130055",
-    "@atomist/sdm": "2.0.0-master.20200204153359",
-    "@atomist/sdm-core": "2.0.0-master.20200205194750",
-    "@atomist/sdm-pack-gcp": "0.1.0-master.20200205105926",
+    "@atomist/sdm": "^2.0.0-master.20200618005455",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
