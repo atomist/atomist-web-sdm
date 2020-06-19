@@ -25,15 +25,11 @@ import { gcpSupport } from "@atomist/sdm-pack-gcp/lib/gcp";
 import { Cancel } from "@atomist/sdm/lib/api/goal/common/Cancel";
 import { ImmaterialGoals } from "@atomist/sdm/lib/api/goal/common/Immaterial";
 import { Queue } from "@atomist/sdm/lib/api/goal/common/Queue";
+import { Goals } from "@atomist/sdm/lib/api/goal/Goals";
 import { ToDefaultBranch } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
-import {
-    not,
-    or,
-} from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
+import { not, or } from "@atomist/sdm/lib/api/mapping/support/pushTestUtils";
 import { machineOptions } from "./lib/configure";
-import {
-    appEngineListener,
-} from "./lib/helpers";
+import { appEngineListener } from "./lib/helpers";
 import {
     AppEnginePushTest,
     FirebasePushTest,
@@ -48,7 +44,6 @@ import {
 /* tslint:disable:max-file-line-count */
 
 export const configuration = configure(async sdm => {
-
     sdm.addExtensionPacks(
         gcpSupport(),
         githubGoalStatusSupport(),
@@ -60,6 +55,7 @@ export const configuration = configure(async sdm => {
         k8sGoalSchedulingSupport(),
     );
 
+    const none = new Goals("none").andLock();
     const queue = new Queue({ concurrent: 5 });
     const cancel = new Cancel();
     const version = container("version", {
@@ -68,14 +64,14 @@ export const configuration = configure(async sdm => {
                 /* tslint:disable:no-invalid-template-strings */
                 args: [
                     "set -ex; " +
-                    "if [[ -f VERSION ]]; then v=$(< VERSION); " +
-                    "elif [[ -f package.json ]]; then v=$(npx -c 'echo $npm_package_version'); " +
-                    "else echo 'No version file found'; v=0.0.0; fi; " +
-                    "b=$(echo \"$ATOMIST_BRANCH\" | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
-                    "d=$(date -u +%Y%m%d%H%M%S); " +
-                    "p=$v-$b.$d; " +
-                    `printf -v r '{"SdmGoal":{"push":{"after":{"version":"%s"}}}}' "$p"; ` +
-                    'echo "$r" > "$ATOMIST_RESULT"',
+                        "if [[ -f VERSION ]]; then v=$(< VERSION); " +
+                        "elif [[ -f package.json ]]; then v=$(npx -c 'echo $npm_package_version'); " +
+                        "else echo 'No version file found'; v=0.0.0; fi; " +
+                        "b=$(echo \"$ATOMIST_BRANCH\" | sed -e 's/[/_]/-/g' -e 's/[^-A-Za-z0-9.]//g' -e 's/--*/-/g' -e 's/-$//'); " +
+                        "d=$(date -u +%Y%m%d%H%M%S); " +
+                        "p=$v-$b.$d; " +
+                        `printf -v r '{"SdmGoal":{"push":{"after":{"version":"%s"}}}}' "$p"; ` +
+                        'echo "$r" > "$ATOMIST_RESULT"',
                 ],
                 /* tslint:enable:no-invalid-template-strings */
                 command: ["/bin/bash", "-c"],
@@ -102,11 +98,10 @@ export const configuration = configure(async sdm => {
         ],
     });
     const tag = new Tag();
-    const releaseTag = new Tag()
-        .with({
-            name: "release-tag",
-            goalExecutor: executeTag({ release: true }),
-        });
+    const releaseTag = new Tag().with({
+        name: "release-tag",
+        goalExecutor: executeTag({ release: true }),
+    });
     const jekyll = container("jekyll", {
         containers: [
             {
@@ -119,11 +114,13 @@ export const configuration = configure(async sdm => {
                 },
             },
         ],
-        output: [{
-            // tslint:disable-next-line:no-invalid-template-strings
-            classifier: "${repo.owner}/${repo.name}/${sha}/site",
-            pattern: { directory: "_site" },
-        }],
+        output: [
+            {
+                // tslint:disable-next-line:no-invalid-template-strings
+                classifier: "${repo.owner}/${repo.name}/${sha}/site",
+                pattern: { directory: "_site" },
+            },
+        ],
     });
     const webpack = container("webpack", {
         containers: [
@@ -306,64 +303,73 @@ export const configuration = configure(async sdm => {
         ],
         /* tslint:enable:no-invalid-template-strings */
     });
-    const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env => container(
-      `Run Smoke Test ${env}`, {
-        containers: [
-            {
-                args: ["npm ci --progress=false && npm run smoke-test"],
-                command: ["bash", "-c"],
-                env: [{ name: "SMOKE_TEST_BASE_URL", value: `https://${env === "production" ? sdm.configuration.sdm.webapp.urls.prod : sdm.configuration.sdm.webapp.urls.staging}`}],
-                image: "gcr.io/atomist-container-registry/ff-gecko-test-container:bd61a8a6bda07cac7c502248455d74ada1164f56",
-                name: "ff-gecko-testing",
-                pushTest: repoSlugMatches(/^atomisthq\/web-app-cljs$/),
-                resources: {
-                    limits: {
-                        cpu: "2000m",
-                        memory: "3072Mi",
+    const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
+        container(`Run Smoke Test ${env}`, {
+            containers: [
+                {
+                    args: ["npm ci --progress=false && npm run smoke-test"],
+                    command: ["bash", "-c"],
+                    env: [
+                        {
+                            name: "SMOKE_TEST_BASE_URL",
+                            value: `https://${
+                                env === "production"
+                                    ? sdm.configuration.sdm.webapp.urls.prod
+                                    : sdm.configuration.sdm.webapp.urls.staging
+                            }`,
+                        },
+                    ],
+                    image:
+                        "gcr.io/atomist-container-registry/ff-gecko-test-container:bd61a8a6bda07cac7c502248455d74ada1164f56",
+                    name: "ff-gecko-testing",
+                    pushTest: repoSlugMatches(/^atomisthq\/web-app-cljs$/),
+                    resources: {
+                        limits: {
+                            cpu: "2000m",
+                            memory: "3072Mi",
+                        },
+                        requests: {
+                            cpu: "1000m",
+                            memory: "3072Mi",
+                        },
                     },
-                    requests: {
-                        cpu: "1000m",
-                        memory: "3072Mi",
+                    securityContext: {
+                        allowPrivilegeEscalation: false,
+                        privileged: false,
+                        runAsGroup: 1000,
+                        runAsNonRoot: true,
+                        runAsUser: 1000,
                     },
                 },
-                securityContext: {
-                    allowPrivilegeEscalation: false,
-                    privileged: false,
-                    runAsGroup: 1000,
-                    runAsNonRoot: true,
-                    runAsUser: 1000,
+            ],
+            initContainers: [
+                {
+                    args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                    command: ["/bin/sh", "-c"],
+                    image: "busybox:1.31.1",
+                    name: "chown",
+                    securityContext: {
+                        allowPrivilegeEscalation: false,
+                        privileged: false,
+                        runAsGroup: 0,
+                        runAsNonRoot: false,
+                        runAsUser: 0,
+                    },
                 },
-            },
-        ],
-        initContainers: [
-            {
-                args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
-                command: ["/bin/sh", "-c"],
-                image: "busybox:1.31.1",
-                name: "chown",
-                securityContext: {
-                    allowPrivilegeEscalation: false,
-                    privileged: false,
-                    runAsGroup: 0,
-                    runAsNonRoot: false,
-                    runAsUser: 0,
-                },
-            },
-        ],
-        /* tslint:disable:no-invalid-template-strings */
-        input: [
-            { classifier: "${repo.owner}/${repo.name}/mvn/cache" },
-        ],
-        /* tslint:disable:no-invalid-template-strings */
-    }));
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+            input: [{ classifier: "${repo.owner}/${repo.name}/mvn/cache" }],
+            /* tslint:disable:no-invalid-template-strings */
+        }),
+    );
     const htmlValidator = container("htmlvalidator", {
         containers: [
             {
                 args: [
                     "if [[ -d _site ]]; then site=_site; " +
-                    "elif [[ -d public ]]; then site=public; vnu_args=--also-check-css; " +
-                    `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
-                    '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args "$site"',
+                        "elif [[ -d public ]]; then site=public; vnu_args=--also-check-css; " +
+                        `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
+                        '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args "$site"',
                 ],
                 command: ["/bin/bash", "-c"],
                 image: "validator/validator:latest",
@@ -407,7 +413,7 @@ export const configuration = configure(async sdm => {
         input: [{ classifier: "${repo.owner}/${repo.name}/${sha}/site" }],
     });
     const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
-    const firebaseTokenArgs = (firebaseToken) ? [`--token=${firebaseToken}`] : [];
+    const firebaseTokenArgs = firebaseToken ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:7.4.0";
     const firebaseDeploy = container("firebase-deploy", {
         containers: [
@@ -419,9 +425,8 @@ export const configuration = configure(async sdm => {
         ],
     });
     const gcloudSdkImage = "google/cloud-sdk:289.0.0";
-    const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env => container(
-        `appEngine-${env}-deploy`,
-        {
+    const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env =>
+        container(`appEngine-${env}-deploy`, {
             containers: [
                 {
                     name: "gcloud-sdk",
@@ -429,7 +434,7 @@ export const configuration = configure(async sdm => {
                     command: ["/bin/bash", "-c"],
                     args: [
                         "set -ex; " +
-                        `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env}; `,
+                            `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env}; `,
                     ],
                 },
             ],
@@ -441,13 +446,12 @@ export const configuration = configure(async sdm => {
                 { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
             ],
             /* tslint:disable:no-invalid-template-strings */
-        },
-    ).withProjectListener(appEngineListener));
+        }).withProjectListener(appEngineListener),
+    );
     appEngineProductionDeploy.definition.preApprovalRequired = true;
 
-    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env => container(
-        `firebase-${env}-deploy`,
-        {
+    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env =>
+        container(`firebase-${env}-deploy`, {
             containers: [
                 {
                     args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
@@ -463,8 +467,8 @@ export const configuration = configure(async sdm => {
                 { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
             ],
             /* tslint:disable:no-invalid-template-strings */
-        },
-    ));
+        }),
+    );
     firebaseProductionDeploy.definition.preApprovalRequired = true;
 
     const incrementVersion = container("increment-version", {
@@ -473,14 +477,14 @@ export const configuration = configure(async sdm => {
                 /* tslint:disable:no-invalid-template-strings */
                 args: [
                     "set -ex; " +
-                    'git checkout "$ATOMIST_BRANCH" && git pull origin "$ATOMIST_BRANCH"; ' +
-                    "if [[ -f VERSION ]]; then " +
-                    `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
-                    'echo "$v" > VERSION && git add VERSION; ' +
-                    "elif [[ -f package.json ]]; then npm version --no-git-tag-version patch && git add package.json; " +
-                    "else echo 'No version file found'; exit 1; fi; " +
-                    'printf -v m "Version: increment after release\n\n[atomist:generated]"; ' +
-                    'git commit -m "$m" && git push origin "$ATOMIST_BRANCH"',
+                        'git checkout "$ATOMIST_BRANCH" && git pull origin "$ATOMIST_BRANCH"; ' +
+                        "if [[ -f VERSION ]]; then " +
+                        `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
+                        'echo "$v" > VERSION && git add VERSION; ' +
+                        "elif [[ -f package.json ]]; then npm version --no-git-tag-version patch && git add package.json; " +
+                        "else echo 'No version file found'; exit 1; fi; " +
+                        'printf -v m "Version: increment after release\n\n[atomist:generated]"; ' +
+                        'git commit -m "$m" && git push origin "$ATOMIST_BRANCH"',
                 ],
                 /* tslint:enable:no-invalid-template-strings */
                 command: ["/bin/bash", "-c"],
@@ -525,56 +529,34 @@ export const configuration = configure(async sdm => {
     const simpleDeployRegExp = /^atomisthq\/(?:blog|web-static)$/;
 
     return {
+        none: {
+            test: repoSlugMatches(/^atomist-skills/),
+            goals: none,
+        },
         immaterial: {
             test: or(IsReleaseCommit, IsChangelogCommit),
             goals: ImmaterialGoals.andLock(),
         },
         webStatic: {
             test: [repoSlugMatches(simpleDeployRegExp), ToDefaultBranch],
-            goals: [
-                queue,
-                firebaseDeploy,
-            ],
+            goals: [queue, firebaseDeploy],
         },
         jekyll: {
             test: [JekyllPushTest],
-            goals: [
-                queue,
-                version,
-                jekyll,
-                htmltest,
-                [htmlValidator, tag],
-            ],
+            goals: [queue, version, jekyll, htmltest, [htmlValidator, tag]],
         },
         shadowCljs: {
             test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/), ShadowCljsPushTest],
-            goals: [
-                queue,
-                cancel,
-                version,
-                [shadowCljsTest, shadowCljs],
-                tag,
-            ],
+            goals: [queue, cancel, version, [shadowCljsTest, shadowCljs], tag],
         },
         webpack: {
             test: [WebPackPushTest],
-            goals: [
-                queue,
-                version,
-                webpack,
-                htmltest,
-                [htmlValidator, tag],
-            ],
+            goals: [queue, version, webpack, htmltest, [htmlValidator, tag]],
         },
         deploy: {
             dependsOn: [tag],
             test: [not(repoSlugMatches(simpleDeployRegExp)), FirebasePushTest, ToDefaultBranch],
-            goals: [
-                [firebaseStagingDeploy],
-                [firebaseProductionDeploy],
-                [releaseTag],
-                [incrementVersion],
-            ],
+            goals: [[firebaseStagingDeploy], [firebaseProductionDeploy], [releaseTag], [incrementVersion]],
         },
         deployAppEngine: {
             dependsOn: [tag],
