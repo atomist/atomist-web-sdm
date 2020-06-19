@@ -15,16 +15,10 @@
  */
 
 import { configurationValue } from "@atomist/automation-client/lib/configuration";
-import {
-    Container,
-    ContainerRegistration,
-} from "@atomist/sdm-core/lib/goal/container/container";
-import {
-    GoalProjectListenerEvent,
-    GoalProjectListenerRegistration,
-} from "@atomist/sdm/lib/api/goal/GoalInvocation";
+import { Container, ContainerRegistration } from "@atomist/sdm-core/lib/goal/container/container";
+import { GoalProjectListenerEvent, GoalProjectListenerRegistration } from "@atomist/sdm/lib/api/goal/GoalInvocation";
 
-export const extractAppEngineUrl = (input: string) => {
+export const extractAppEngineUrl = (input: string): string | undefined => {
     const re = /Deployed service \[\w+\] to \[(.*)\]/;
     const match = re.exec(input);
     return match ? match[1] : undefined;
@@ -52,12 +46,15 @@ export const appEngineListener: GoalProjectListenerRegistration = {
             } else {
                 const extracted = extractAppEngineUrl(r.progressLog.log);
                 if (extracted) {
-                    url = extracted.replace(/(\w+).(\w+).appspot.com/, configurationValue<string>("sdm.webapp.urls.staging"));
+                    url = extracted.replace(
+                        /(\w+).(\w+).appspot.com/,
+                        configurationValue<string>("sdm.webapp.urls.staging"),
+                    );
                 }
             }
             if (url) {
                 data = {
-                    externalUrls: [{url}],
+                    externalUrls: [{ url }],
                 };
             }
         }
@@ -74,7 +71,7 @@ const registration: ContainerRegistration = {
             command: ["/bin/bash", "-c"],
             args: [
                 "set -ex; " +
-                `gcloud app deploy app.staging.yaml --quiet --project=atomist-new-web-app-staging --version=$(cat gae-version) --no-promote; `,
+                    `gcloud app deploy app.staging.yaml --quiet --project=atomist-new-web-app-staging --version=$(cat gae-version) --no-promote; `,
             ],
         },
     ],

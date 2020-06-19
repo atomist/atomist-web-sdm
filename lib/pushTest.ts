@@ -15,11 +15,7 @@
  */
 
 import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
-import {
-    predicatePushTest,
-    pushTest,
-    PushTest,
-} from "@atomist/sdm/lib/api/mapping/PushTest";
+import { predicatePushTest, pushTest, PushTest } from "@atomist/sdm/lib/api/mapping/PushTest";
 import { hasFile } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
 
 /** Test for Firebase configuration file in project. */
@@ -69,7 +65,7 @@ export const IsChangelogCommit: PushTest = {
     name: "IsChangelogCommit",
     mapping: async pi => {
         const commitMessage = pi.push.after && pi.push.after.message ? pi.push.after.message : "";
-        const changelogCommitRegexp = /Changelog:\s\#[\d+]+\sto\s([\w]+[,]?[\s]?)+/;
+        const changelogCommitRegexp = /^Changelog:.* to /i;
         return changelogCommitRegexp.test(commitMessage);
     },
 };

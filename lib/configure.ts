@@ -29,7 +29,9 @@ export const DefaultName = "@atomist/atomist-web-sdm";
  * Provide default SDM configuration. If any other source defines
  * these values, they will override these defaults.
  */
-async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfiguration): Promise<LocalSoftwareDeliveryMachineConfiguration> {
+async function configureSdmDefaults(
+    cfg: LocalSoftwareDeliveryMachineConfiguration,
+): Promise<LocalSoftwareDeliveryMachineConfiguration> {
     const defaultCfg: SoftwareDeliveryMachineConfiguration = {
         sdm: {
             k8s: {
@@ -49,7 +51,5 @@ async function configureSdmDefaults(cfg: LocalSoftwareDeliveryMachineConfigurati
 }
 
 export const machineOptions: ConfigureMachineOptions = {
-    preProcessors: [
-        configureSdmDefaults,
-    ],
+    preProcessors: [configureSdmDefaults],
 };

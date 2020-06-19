@@ -17,11 +17,7 @@
 import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMemoryProject";
 import { StatefulPushListenerInvocation } from "@atomist/sdm/lib/api/dsl/goalContribution";
 import * as assert from "power-assert";
-import {
-    AppEnginePushTest,
-    FirebasePushTest,
-    IsChangelogCommit,
-} from "../lib/pushTest";
+import { AppEnginePushTest, FirebasePushTest, IsChangelogCommit } from "../lib/pushTest";
 
 describe("pushTests", () => {
     describe("FirebaseConfiguration", () => {
@@ -48,7 +44,7 @@ describe("pushTests", () => {
     });
     describe("IsChangelogCommit", () => {
         it("should return true for commits created by changelog that are just pr updates", async () => {
-            const pi: StatefulPushListenerInvocation =  {
+            const pi: StatefulPushListenerInvocation = {
                 push: {
                     after: {
                         message: "Changelog: #329 to changed",
@@ -58,8 +54,19 @@ describe("pushTests", () => {
             const result = await IsChangelogCommit.mapping(pi);
             assert.strictEqual(result, true);
         });
+        it("should return true for changelog commits adding a commit", async () => {
+            const pi: StatefulPushListenerInvocation = {
+                push: {
+                    after: {
+                        message: "Changelog: abcdef0 to added",
+                    },
+                },
+            } as any;
+            const result = await IsChangelogCommit.mapping(pi);
+            assert.strictEqual(result, true);
+        });
         it("should not match release commits", async () => {
-            const pi: StatefulPushListenerInvocation =  {
+            const pi: StatefulPushListenerInvocation = {
                 push: {
                     after: {
                         message: "Changelog: add release 0.0.1",
@@ -70,7 +77,7 @@ describe("pushTests", () => {
             assert.strictEqual(result, false);
         });
         it("should not match random commit", async () => {
-            const pi: StatefulPushListenerInvocation =  {
+            const pi: StatefulPushListenerInvocation = {
                 push: {
                     after: {
                         message: "I wish I were a real boy!",

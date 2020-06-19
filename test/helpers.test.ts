@@ -25,7 +25,6 @@ describe("appEngineTests", () => {
     it("should return undefined when not found", () => {
         const result = extractAppEngineUrl("Some garbage goes here");
         assert.strictEqual(result, undefined);
-
     });
 });
 
