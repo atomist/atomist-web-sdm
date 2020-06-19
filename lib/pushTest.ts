@@ -15,28 +15,21 @@
  */
 
 import { fileExists } from "@atomist/automation-client/lib/project/util/projectUtils";
-import {
-    predicatePushTest,
-    pushTest,
-    PushTest,
-} from "@atomist/sdm/lib/api/mapping/PushTest";
+import { predicatePushTest, pushTest, PushTest } from "@atomist/sdm/lib/api/mapping/PushTest";
 import { hasFile } from "@atomist/sdm/lib/api/mapping/support/commonPushTests";
 
 /** Test for Firebase configuration file in project. */
-export const FirebasePushTest = predicatePushTest(
-    "HasFirebaseConfiguration",
-    async p => fileExists(p, "firebase*.json"));
+export const FirebasePushTest = predicatePushTest("HasFirebaseConfiguration", async p =>
+    fileExists(p, "firebase*.json"),
+);
 
 /** Test for AppEngine configuration file in project. */
-export const AppEnginePushTest = predicatePushTest(
-    "HasAppEngineConfiguration",
-    async p => fileExists(p, ["app.yaml", "app.*.yaml"]));
+export const AppEnginePushTest = predicatePushTest("HasAppEngineConfiguration", async p =>
+    fileExists(p, ["app.yaml", "app.*.yaml"]),
+);
 
 /** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");
-
-/** Test for shadow-cljs configuration file in project. */
-export const ShadowCljsPushTest = hasFile("shadow-cljs.edn");
 
 /** Test for webpack configuration file in project. */
 export const WebPackPushTest = hasFile("webpack.config.js");
@@ -49,8 +42,9 @@ export const WebPackPushTest = hasFile("webpack.config.js");
  * @return Push test performing the match
  */
 export function repoSlugMatches(re: RegExp): PushTest {
-    return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`,
-        async pci => re.test(`${pci.id.owner}/${pci.id.repo}`));
+    return pushTest(`Project owner/name slug matches regular expression ${re.toString()}`, async pci =>
+        re.test(`${pci.id.owner}/${pci.id.repo}`),
+    );
 }
 
 /**
@@ -62,7 +56,7 @@ export const IsReleaseCommit: PushTest = {
     mapping: async pi => {
         const versionRegexp = /Version: increment after .*release/i;
         const changelogRegexp = /Changelog: add release .*/i;
-        const commitMessage = (pi.push.after && pi.push.after.message) ? pi.push.after.message : "";
+        const commitMessage = pi.push.after && pi.push.after.message ? pi.push.after.message : "";
         return versionRegexp.test(commitMessage) || changelogRegexp.test(commitMessage);
     },
 };
@@ -70,7 +64,7 @@ export const IsReleaseCommit: PushTest = {
 export const IsChangelogCommit: PushTest = {
     name: "IsChangelogCommit",
     mapping: async pi => {
-        const commitMessage = (pi.push.after && pi.push.after.message) ? pi.push.after.message : "";
+        const commitMessage = pi.push.after && pi.push.after.message ? pi.push.after.message : "";
         const changelogCommitRegexp = /Changelog:\s\#[\d+]+\sto\s([\w]+[,]?[\s]?)+/;
         return changelogCommitRegexp.test(commitMessage);
     },

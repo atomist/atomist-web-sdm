@@ -37,7 +37,6 @@ import {
     IsReleaseCommit,
     JekyllPushTest,
     repoSlugMatches,
-    ShadowCljsPushTest,
     WebPackPushTest,
 } from "./lib/pushTest";
 
@@ -530,11 +529,22 @@ export const configuration = configure(async sdm => {
 
     return {
         none: {
-            test: repoSlugMatches(/^atomist-skills/),
+            // only set goals in atomist and atomisthq
+            test: not(repoSlugMatches(/^atomist(?:hq)?\//)),
             goals: none,
         },
         immaterial: {
-            test: or(IsReleaseCommit, IsChangelogCommit),
+            test: [
+                or(IsReleaseCommit, IsChangelogCommit),
+                or(
+                    AppEnginePushTest,
+                    FirebasePushTest,
+                    JekyllPushTest,
+                    WebPackPushTest,
+                    repoSlugMatches(simpleDeployRegExp),
+                    repoSlugMatches(/^atomisthq\/web-app-cljs$/),
+                ),
+            ],
             goals: ImmaterialGoals.andLock(),
         },
         webStatic: {
@@ -546,7 +556,7 @@ export const configuration = configure(async sdm => {
             goals: [queue, version, jekyll, htmltest, [htmlValidator, tag]],
         },
         shadowCljs: {
-            test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/), ShadowCljsPushTest],
+            test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/)],
             goals: [queue, cancel, version, [shadowCljsTest, shadowCljs], tag],
         },
         webpack: {
