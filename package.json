@@ -24,8 +24,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/automation-client": "2.0.0-master.20200205130055",
-    "@atomist/sdm": "^2.0.0-master.20200618005455",
+    "@atomist/sdm": "2.0.0-client-core-index.20200623161140",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
