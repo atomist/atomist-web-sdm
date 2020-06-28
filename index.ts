@@ -118,7 +118,7 @@ export const configuration = configure(async sdm => {
         containers: [
             {
                 args: ["build", "--strict"],
-                image: "squidfunk/mkdocs-material:5.3.3",
+                image: "squidfunk/mkdocs-material:3.3.0",
                 name: "mkdocs",
                 securityContext: {
                     allowPrivilegeEscalation: false,
