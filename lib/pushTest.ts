@@ -31,6 +31,9 @@ export const AppEnginePushTest = predicatePushTest("HasAppEngineConfiguration", 
 /** Test for Jekyll configuration file in project. */
 export const JekyllPushTest = hasFile("_config.yml");
 
+/** Test for MkDocs configuration file in project. */
+export const MkDocsPushTest = hasFile("mkdocs.yml");
+
 /** Test for webpack configuration file in project. */
 export const WebPackPushTest = hasFile("webpack.config.js");
 

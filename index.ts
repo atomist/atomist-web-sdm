@@ -28,6 +28,7 @@ import {
     IsChangelogCommit,
     IsReleaseCommit,
     JekyllPushTest,
+    MkDocsPushTest,
     repoSlugMatches,
     WebPackPushTest,
 } from "./lib/pushTest";
@@ -110,6 +111,26 @@ export const configuration = configure(async sdm => {
                 // tslint:disable-next-line:no-invalid-template-strings
                 classifier: "${repo.owner}/${repo.name}/${sha}/site",
                 pattern: { directory: "_site" },
+            },
+        ],
+    });
+    const mkdocs = container("mkdocs", {
+        containers: [
+            {
+                args: ["build", "--strict"],
+                image: "squidfunk/mkdocs-material:5.3.3",
+                name: "mkdocs",
+                securityContext: {
+                    allowPrivilegeEscalation: false,
+                    privileged: false,
+                },
+            },
+        ],
+        output: [
+            {
+                // tslint:disable-next-line:no-invalid-template-strings
+                classifier: "${repo.owner}/${repo.name}/${sha}/site",
+                pattern: { directory: "site" },
             },
         ],
     });
@@ -359,6 +380,7 @@ export const configuration = configure(async sdm => {
                 args: [
                     "if [[ -d _site ]]; then site=_site; " +
                         "elif [[ -d public ]]; then site=public; vnu_args=--also-check-css; " +
+                        "elif [[ -d site ]]; then site=site; vnu_args=--also-check-css; " +
                         `else echo "Unsupported project: site neither '_site' nor 'public'" 1>&2; exit 1; fi; ` +
                         '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args "$site"',
                 ],
@@ -473,7 +495,7 @@ export const configuration = configure(async sdm => {
                         `v=$(awk -F. '{ p = $3 + 1; print $1 "." $2 "." p }' < VERSION); ` +
                         'echo "$v" > VERSION && git add VERSION; ' +
                         "elif [[ -f package.json ]]; then npm version --no-git-tag-version patch && git add package.json; " +
-                        "else echo 'No version file found'; exit 1; fi; " +
+                        "else echo 'No version file found'; exit 0; fi; " +
                         'printf -v m "Version: increment after release\n\n[atomist:generated]"; ' +
                         'git commit -m "$m" && git push origin "$ATOMIST_BRANCH"',
                 ],
@@ -546,6 +568,10 @@ export const configuration = configure(async sdm => {
         jekyll: {
             test: [JekyllPushTest],
             goals: [queue, version, jekyll, htmltest, [htmlValidator, tag]],
+        },
+        mkdocs: {
+            test: [MkDocsPushTest],
+            goals: [queue, version, mkdocs, htmltest, [htmlValidator, tag]],
         },
         shadowCljs: {
             test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/)],
