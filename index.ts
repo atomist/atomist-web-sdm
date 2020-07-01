@@ -315,65 +315,6 @@ export const configuration = configure(async sdm => {
         ],
         /* tslint:enable:no-invalid-template-strings */
     });
-    const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
-        container(`Run Smoke Test ${env}`, {
-            containers: [
-                {
-                    args: ["npm ci --progress=false && npm run smoke-test"],
-                    command: ["bash", "-c"],
-                    env: [
-                        {
-                            name: "SMOKE_TEST_BASE_URL",
-                            value: `https://${
-                                env === "production"
-                                    ? sdm.configuration.sdm.webapp.urls.prod
-                                    : sdm.configuration.sdm.webapp.urls.staging
-                            }`,
-                        },
-                    ],
-                    image:
-                        "gcr.io/atomist-container-registry/ff-gecko-test-container:bd61a8a6bda07cac7c502248455d74ada1164f56",
-                    name: "ff-gecko-testing",
-                    pushTest: repoSlugMatches(/^atomisthq\/web-app-cljs$/),
-                    resources: {
-                        limits: {
-                            cpu: "2000m",
-                            memory: "3072Mi",
-                        },
-                        requests: {
-                            cpu: "1000m",
-                            memory: "3072Mi",
-                        },
-                    },
-                    securityContext: {
-                        allowPrivilegeEscalation: false,
-                        privileged: false,
-                        runAsGroup: 1000,
-                        runAsNonRoot: true,
-                        runAsUser: 1000,
-                    },
-                },
-            ],
-            initContainers: [
-                {
-                    args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
-                    command: ["/bin/sh", "-c"],
-                    image: "busybox:1.31.1",
-                    name: "chown",
-                    securityContext: {
-                        allowPrivilegeEscalation: false,
-                        privileged: false,
-                        runAsGroup: 0,
-                        runAsNonRoot: false,
-                        runAsUser: 0,
-                    },
-                },
-            ],
-            /* tslint:disable:no-invalid-template-strings */
-            input: [{ classifier: "${repo.owner}/${repo.name}/mvn/cache" }],
-            /* tslint:disable:no-invalid-template-strings */
-        }),
-    );
     const htmlValidator = container("htmlvalidator", {
         containers: [
             {
@@ -589,14 +530,7 @@ export const configuration = configure(async sdm => {
         deployAppEngine: {
             dependsOn: [tag],
             test: [AppEnginePushTest, ToDefaultBranch],
-            goals: [
-                appEngineStagingDeploy,
-                runSmokeTestStaging,
-                appEngineProductionDeploy,
-                releaseTag,
-                incrementVersion,
-                runSmokeTestProduction,
-            ],
+            goals: [appEngineStagingDeploy, appEngineProductionDeploy, releaseTag, incrementVersion],
         },
     };
 }, machineOptions);
