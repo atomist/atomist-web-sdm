@@ -326,7 +326,7 @@ export const configuration = configure(async sdm => {
                         '/vnu-runtime-image/bin/vnu --skip-non-html --also-check-svg $vnu_args "$site"',
                 ],
                 command: ["/bin/bash", "-c"],
-                image: "validator/validator:latest",
+                image: "validator/validator:20.6.30",
                 name: "nu",
                 resources: {
                     limits: {
