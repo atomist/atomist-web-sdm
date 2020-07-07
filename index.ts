@@ -388,7 +388,7 @@ export const configuration = configure(async sdm => {
                     command: ["/bin/bash", "-c"],
                     args: [
                         "set -ex; " +
-                            `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env}; `,
+                            `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env} --version=$ATOMIST_SHA; `,
                     ],
                 },
             ],
