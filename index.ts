@@ -389,9 +389,9 @@ export const configuration = configure(async sdm => {
                     args: [
                         /*eslint-disable */
                         "set -ex; " +
-                            "export NEWVERSION=$(echo $ATOMIST_VERSION | sed 's|\.|-|g'); " +
+                            "export NEWVERSION=$(echo $ATOMIST_VERSION | sed 's|\\.|-|g'); " +
                             `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env} --version=$NEWVERSION-$ATOMIST_SHA; `,
-                       /*eslint-enable */
+                         /*eslint-enable */
                     ],
                 },
             ],
