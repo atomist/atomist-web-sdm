@@ -24,8 +24,8 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/sdm": "2.0.0-master.20200703143927",
-    "lodash": "^4.17.15"
+    "@atomist/sdm": "^2.0.0-sync-repo-github-app.20200312140329",
+    "lodash": "^4.17.19"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.144",
@@ -37,7 +37,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "espower-typescript": "^9.0.2",
-    "mocha": "^6.2.1",
+    "mocha": "^8.0.1",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
     "prettier": "^2.0.5",
