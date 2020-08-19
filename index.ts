@@ -369,16 +369,28 @@ export const configuration = configure(async sdm => {
     const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
     const firebaseTokenArgs = firebaseToken ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:7.4.0";
-    const firebaseDeploy = container("firebase-deploy", {
-        containers: [
-            {
-                args: ["firebase", "--non-interactive", "deploy", ...firebaseTokenArgs],
-                image: firebaseImage,
-                name: "firebase",
-            },
-        ],
-    });
     const gcloudSdkImage = "google/cloud-sdk:289.0.0";
+    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env =>
+        container(`firebase-${env}-deploy`, {
+            containers: [
+                {
+                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
+                    image: firebaseImage,
+                    name: "firebase",
+                },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+            input: [
+                { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/server" },
+                { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+        }),
+    );
+    firebaseProductionDeploy.definition.preApprovalRequired = true;
+
     const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env =>
         container(`appEngine-${env}-deploy`, {
             containers: [
@@ -406,27 +418,6 @@ export const configuration = configure(async sdm => {
         }).withProjectListener(appEngineListener),
     );
     appEngineProductionDeploy.definition.preApprovalRequired = true;
-
-    const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env =>
-        container(`firebase-${env}-deploy`, {
-            containers: [
-                {
-                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
-                    image: firebaseImage,
-                    name: "firebase",
-                },
-            ],
-            /* tslint:disable:no-invalid-template-strings */
-            input: [
-                { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
-                { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
-                { classifier: "${repo.owner}/${repo.name}/${sha}/server" },
-                { classifier: "${repo.owner}/${repo.name}/${sha}/config" },
-            ],
-            /* tslint:disable:no-invalid-template-strings */
-        }),
-    );
-    firebaseProductionDeploy.definition.preApprovalRequired = true;
 
     const incrementVersion = container("increment-version", {
         containers: [
@@ -504,10 +495,6 @@ export const configuration = configure(async sdm => {
                 ),
             ],
             goals: ImmaterialGoals.andLock(),
-        },
-        webStatic: {
-            test: [repoSlugMatches(simpleDeployRegExp), ToDefaultBranch],
-            goals: [queue, firebaseDeploy],
         },
         jekyll: {
             test: [JekyllPushTest],
