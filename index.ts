@@ -474,26 +474,13 @@ export const configuration = configure(async sdm => {
         ],
     });
 
-    const simpleDeployRegExp = /^atomisthq\/(?:blog|web-static)$/;
-
     return {
         none: {
-            // only set goals in atomist and atomisthq
-            test: not(repoSlugMatches(/^atomist(?:hq)?\//)),
+            test: not(repoSlugMatches(/^(?:atomist\/docs|atomisthq\/web-(?:app(?:-cljs)?|site))$/)),
             goals: none,
         },
         immaterial: {
-            test: [
-                or(IsReleaseCommit, IsChangelogCommit),
-                or(
-                    AppEnginePushTest,
-                    FirebasePushTest,
-                    JekyllPushTest,
-                    WebPackPushTest,
-                    repoSlugMatches(simpleDeployRegExp),
-                    repoSlugMatches(/^atomisthq\/web-app-cljs$/),
-                ),
-            ],
+            test: or(IsReleaseCommit, IsChangelogCommit),
             goals: ImmaterialGoals.andLock(),
         },
         jekyll: {
@@ -514,8 +501,8 @@ export const configuration = configure(async sdm => {
         },
         deploy: {
             dependsOn: [tag],
-            test: [not(repoSlugMatches(simpleDeployRegExp)), FirebasePushTest, ToDefaultBranch],
-            goals: [[firebaseStagingDeploy], [firebaseProductionDeploy], [releaseTag], [incrementVersion]],
+            test: [FirebasePushTest, ToDefaultBranch],
+            goals: [firebaseStagingDeploy, firebaseProductionDeploy, releaseTag, incrementVersion],
         },
         deployAppEngine: {
             dependsOn: [tag],
