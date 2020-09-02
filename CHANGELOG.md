@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/atomist-web-sdm/compare/0.3.0...HEAD)
 
+### Changed
+
+-   Make push rules more opt in. [ce4a72a](https://github.com/atomist/atomist-web-sdm/commit/ce4a72a01e84705bb650f86f9ed5b4da5bb49f86)
+
 ### Added
 
 -   Enable cancel goal for shadow builds, ignore Changelog commits. [#15](https://github.com/atomist/atomist-web-sdm/issues/15)
