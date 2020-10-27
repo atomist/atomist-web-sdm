@@ -364,7 +364,17 @@ export const configuration = configure(async sdm => {
             },
         ],
         // tslint:disable-next-line:no-invalid-template-strings
-        input: [{ classifier: "${repo.owner}/${repo.name}/${sha}/site" }],
+        input: [
+            { classifier: "${repo.owner}/${repo.name}/${sha}/site" },
+            { classifier: "${repo.owner}/${repo.name}/htmltest" },
+        ],
+        // tslint:disable-next-line:no-invalid-template-strings
+        output: [
+            {
+                classifier: "${repo.owner}/${repo.name}/htmltest",
+                pattern: { globPattern: "tmp/.htmltest/refcache.json" },
+            },
+        ],
     });
     const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
     const firebaseTokenArgs = firebaseToken ? [`--token=${firebaseToken}`] : [];
