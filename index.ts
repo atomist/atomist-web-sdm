@@ -21,7 +21,7 @@ import { githubGoalStatusSupport } from "@atomist/sdm/lib/pack/github-goal-statu
 import { goalStateSupport } from "@atomist/sdm/lib/pack/goal-state";
 import { k8sGoalSchedulingSupport } from "@atomist/sdm/lib/pack/k8s";
 import { machineOptions } from "./lib/configure";
-import { appEngineListener } from "./lib/helpers";
+import { appEngineListener, runSmokeTestProduction, runSmokeTestStaging } from "./lib/helpers";
 import {
     AppEnginePushTest,
     FirebasePushTest,
@@ -517,7 +517,14 @@ export const configuration = configure(async sdm => {
         deployAppEngine: {
             dependsOn: [tag],
             test: [AppEnginePushTest, ToDefaultBranch],
-            goals: [appEngineStagingDeploy, appEngineProductionDeploy, releaseTag, incrementVersion],
+            goals: [
+                appEngineStagingDeploy,
+                runSmokeTestStaging,
+                appEngineProductionDeploy,
+                runSmokeTestProduction,
+                releaseTag,
+                incrementVersion,
+            ],
         },
     };
 }, machineOptions);
