@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { GoalProjectListenerEvent, GoalProjectListenerRegistration } from "@atomist/sdm/lib/api/goal/GoalInvocation";
 import { configurationValue } from "@atomist/automation-client/lib/configuration";
+import { GoalProjectListenerEvent, GoalProjectListenerRegistration } from "@atomist/sdm/lib/api/goal/GoalInvocation";
 import { Container, ContainerRegistration } from "@atomist/sdm/lib/core/goal/container/container";
 
 export const extractAppEngineUrl = (input: string): string | undefined => {
