@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Cancel, Goals, ImmaterialGoals, not, or, Queue, ToDefaultBranch } from "@atomist/sdm";
+import { and, Cancel, Goals, hasFile, ImmaterialGoals, not, or, Queue, ToDefaultBranch } from "@atomist/sdm";
 import { configure, container, executeTag, Tag } from "@atomist/sdm/lib/core";
 import { gcpSupport } from "@atomist/sdm/lib/pack/gcp";
 import { githubGoalStatusSupport } from "@atomist/sdm/lib/pack/github-goal-status";
 import { goalStateSupport } from "@atomist/sdm/lib/pack/goal-state";
 import { k8sGoalSchedulingSupport } from "@atomist/sdm/lib/pack/k8s";
 import { machineOptions } from "./lib/configure";
-import { appEngineListener, runSmokeTestProduction, runSmokeTestStaging } from "./lib/helpers";
+import { appEngineListener } from "./lib/helpers";
 import {
     AppEnginePushTest,
     FirebasePushTest,
@@ -483,6 +483,63 @@ export const configuration = configure(async sdm => {
             },
         ],
     });
+
+    const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
+        container(`Run Smoke Test ${env}`, {
+            containers: [
+                {
+                    env: [
+                        {
+                            name: "CYPRESS_SMOKE_TEST_BASE_URL",
+                            value: `https://${
+                                env === "production"
+                                    ? sdm.configuration.sdm.webapp.urls.prod
+                                    : sdm.configuration.sdm.webapp.urls.staging
+                            }`,
+                        },
+                    ],
+                    image: "cypress/included:6.1.0",
+                    name: "cypress-included",
+                    pushTest: and(repoSlugMatches(/^atomisthq\/web-ap-cljs$/), hasFile("cypress.json")),
+                    resources: {
+                        limits: {
+                            cpu: "2000m",
+                            memory: "3072Mi",
+                        },
+                        requests: {
+                            cpu: "1000m",
+                            memory: "3072Mi",
+                        },
+                    },
+                    securityContext: {
+                        allowPrivilegeEscalation: false,
+                        privileged: false,
+                        runAsGroup: 1000,
+                        runAsNonRoot: true,
+                        runAsUser: 1000,
+                    },
+                },
+            ],
+            initContainers: [
+                {
+                    args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
+                    command: ["/bin/sh", "-c"],
+                    image: "busybox:1.31.1",
+                    name: "chown",
+                    securityContext: {
+                        allowPrivilegeEscalation: false,
+                        privileged: false,
+                        runAsGroup: 0,
+                        runAsNonRoot: false,
+                        runAsUser: 0,
+                    },
+                },
+            ],
+            /* tslint:disable:no-invalid-template-strings */
+            input: [{ classifier: "${repo.owner}/${repo.name}/mvn/cache" }],
+            /* tslint:disable:no-invalid-template-strings */
+        }),
+    );
 
     return {
         none: {
