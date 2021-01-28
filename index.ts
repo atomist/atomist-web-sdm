@@ -376,22 +376,13 @@ export const configuration = configure(async sdm => {
             },
         ],
     });
-    const firebaseToken: string | undefined = sdm.configuration.sdm.firebase?.token;
-    const firebaseTokenArgs = firebaseToken ? [`--token=${firebaseToken}`] : [];
     const firebaseImage = "andreysenov/firebase-tools:9.2.2";
     const gcloudSdkImage = "gcr.io/google.com/cloudsdktool/cloud-sdk:325.0.0";
     const [firebaseStagingDeploy, firebaseProductionDeploy] = ["staging", "production"].map(env =>
         container(`firebase-${env}-deploy`, {
             containers: [
                 {
-                    args: [
-                        "firebase",
-                        "--debug",
-                        "--non-interactive",
-                        `--project=${env}`,
-                        "deploy",
-                        ...firebaseTokenArgs,
-                    ],
+                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy"],
                     image: firebaseImage,
                     name: "firebase",
                 },
