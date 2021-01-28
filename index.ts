@@ -355,7 +355,7 @@ export const configuration = configure(async sdm => {
         containers: [
             {
                 args: ["htmltest"],
-                image: "wjdp/htmltest:v0.14.0",
+                image: "wjdp/htmltest:v0.12.0",
                 name: "htmltest",
                 securityContext: {
                     allowPrivilegeEscalation: false,
