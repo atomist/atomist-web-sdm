@@ -384,7 +384,14 @@ export const configuration = configure(async sdm => {
         container(`firebase-${env}-deploy`, {
             containers: [
                 {
-                    args: ["firebase", "--non-interactive", `--project=${env}`, "deploy", ...firebaseTokenArgs],
+                    args: [
+                        "firebase",
+                        "--debug",
+                        "--non-interactive",
+                        `--project=${env}`,
+                        "deploy",
+                        ...firebaseTokenArgs,
+                    ],
                     image: firebaseImage,
                     name: "firebase",
                 },
