@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-import { Cancel, Goals, ImmaterialGoals, not, or, Queue, ToDefaultBranch } from "@atomist/sdm";
-import { configure, container, executeTag, Tag } from "@atomist/sdm/lib/core";
+import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import {
+    Cancel,
+    Goals,
+    ImmaterialGoals,
+    not,
+    or,
+    Queue,
+    RepoContext,
+    SdmGoalEvent,
+    ToDefaultBranch,
+} from "@atomist/sdm";
+import { configure, Container, container, ContainerRegistration, executeTag, Tag } from "@atomist/sdm/lib/core";
+import { GoalContainerSpec } from "@atomist/sdm/lib/core/goal/container/container";
 import { gcpSupport } from "@atomist/sdm/lib/pack/gcp";
 import { githubGoalStatusSupport } from "@atomist/sdm/lib/pack/github-goal-status";
 import { goalStateSupport } from "@atomist/sdm/lib/pack/goal-state";
@@ -399,22 +411,48 @@ export const configuration = configure(async sdm => {
     );
     firebaseProductionDeploy.definition.preApprovalRequired = true;
 
+    const getValueFromPropertiesFile = (propertiesFileContent: string, propertyKey: string): string | undefined => {
+        const lines = propertiesFileContent.split("\n");
+        for (const line of lines) {
+            const parts: string[] = line.split("=");
+            if (parts[0] === propertyKey) {
+                return parts[1];
+            }
+        }
+        return undefined;
+    };
+
     const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env =>
         container(`appEngine-${env}-deploy`, {
-            containers: [
-                {
-                    name: "gcloud-sdk",
-                    image: gcloudSdkImage,
-                    command: ["/bin/bash", "-c"],
-                    args: [
-                        /*eslint-disable */
-                        "set -ex; " +
-                            "export NEWVERSION=$(echo $ATOMIST_VERSION | sed 's|\\.|-|g'); " +
-                            `gcloud app deploy app.${env}.yaml --quiet --project=atomist-new-web-app-${env} --version=$NEWVERSION; `,
-                         /*eslint-enable */
+            callback: async function appEngineCallback(
+                r: ContainerRegistration,
+                p: GitProject,
+                g: Container,
+                e: SdmGoalEvent,
+                c: RepoContext,
+            ): Promise<GoalContainerSpec> {
+                const file = await p.getFile("atomist-build.properties");
+                const fileContent = file ? await file.getContent() : "";
+                const googleProjectName =
+                    getValueFromPropertiesFile(fileContent, `google-project-name`) || "atomist-new-web-app";
+                return {
+                    containers: [
+                        {
+                            name: "gcloud-sdk",
+                            image: gcloudSdkImage,
+                            command: ["/bin/bash", "-c"],
+                            args: [
+                                /*eslint-disable */
+                                "set -ex; " +
+                                "export NEWVERSION=$(echo $ATOMIST_VERSION | sed 's|\\.|-|g'); " +
+                                `gcloud app deploy app.${env}.yaml --quiet --project=${googleProjectName}-${env} --version=$NEWVERSION; `,
+                                /*eslint-enable */
+                            ],
+                        },
                     ],
-                },
-            ],
+                };
+            },
+            containers: [],
             /* tslint:disable:no-invalid-template-strings */
             input: [
                 { classifier: "${repo.owner}/${repo.name}/${sha}/node_modules" },
