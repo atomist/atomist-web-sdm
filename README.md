@@ -97,5 +97,5 @@ the 'Approve' button in the Atomist dashboard or Slack.
 Created by [Atomist][atomist].
 Need Help?  [Join our Slack workspace][slack].
 
-[atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
+[atomist]: https://atomist.com/ (Atomist)
 [slack]: https://join.atomist.com/ (Atomist Community Slack)
