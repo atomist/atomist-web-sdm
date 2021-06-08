@@ -578,7 +578,7 @@ export const configuration = configure(async sdm => {
 
     return {
         none: {
-            test: not(repoSlugMatches(/^(?:atomist\/docs|atomisthq\/web-(?:app(?:-cljs)?|site))$/)),
+            test: not(repoSlugMatches(/^(?:atomist\/docs|atomisthq\/web-(?:app(?:-cljs)?|site)|atomisthq\/dso-web)$/)),
             goals: none,
         },
         immaterial: {
@@ -594,7 +594,7 @@ export const configuration = configure(async sdm => {
             goals: [queue, version, mkdocs, htmltest, [htmlValidator, tag]],
         },
         shadowCljs: {
-            test: [repoSlugMatches(/^atomisthq\/web-app-cljs$/)],
+            test: repoSlugMatches(/^atomisthq\/web-app-cljs|atomisthq\/dso-web$/),
             goals: [queue, cancel, version, [shadowCljsTest, shadowCljs], tag],
         },
         webpack: {
