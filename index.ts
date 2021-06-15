@@ -424,13 +424,10 @@ export const configuration = configure(async sdm => {
 
     const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env =>
         container(`appEngine-${env}-deploy`, {
-            callback: async function appEngineCallback(
+            callback: async (
                 r: ContainerRegistration,
                 p: GitProject,
-                g: Container,
-                e: SdmGoalEvent,
-                c: RepoContext,
-            ): Promise<GoalContainerSpec> {
+            ) => {
                 const file = await p.getFile("atomist-build.properties");
                 const fileContent = file ? await file.getContent() : "";
                 const googleProjectName =
@@ -522,13 +519,10 @@ export const configuration = configure(async sdm => {
 
     const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
         container(`Run Smoke Test ${env}`, {
-            callback: async function smokeTestCallback(
+            callback: async (
                 r: ContainerRegistration,
                 p: GitProject,
-                g: Container,
-                e: SdmGoalEvent,
-                c: RepoContext,
-            ): Promise<GoalContainerSpec> {
+            ) => {
                 const file = await p.getFile("atomist-build.properties");
                 const fileContent = file ? await file.getContent() : "";
                 const sdmConfiguredSmokeTestBaseUrl =
