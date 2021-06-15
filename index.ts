@@ -22,12 +22,9 @@ import {
     not,
     or,
     Queue,
-    RepoContext,
-    SdmGoalEvent,
     ToDefaultBranch,
 } from "@atomist/sdm";
-import { configure, Container, container, ContainerRegistration, executeTag, Tag } from "@atomist/sdm/lib/core";
-import { GoalContainerSpec } from "@atomist/sdm/lib/core/goal/container/container";
+import { configure, container, ContainerRegistration, executeTag, Tag } from "@atomist/sdm/lib/core";
 import { gcpSupport } from "@atomist/sdm/lib/pack/gcp";
 import { githubGoalStatusSupport } from "@atomist/sdm/lib/pack/github-goal-status";
 import { goalStateSupport } from "@atomist/sdm/lib/pack/goal-state";
@@ -424,10 +421,7 @@ export const configuration = configure(async sdm => {
 
     const [appEngineStagingDeploy, appEngineProductionDeploy] = ["staging", "production"].map(env =>
         container(`appEngine-${env}-deploy`, {
-            callback: async (
-                r: ContainerRegistration,
-                p: GitProject,
-            ) => {
+            callback: async (r: ContainerRegistration, p: GitProject) => {
                 const file = await p.getFile("atomist-build.properties");
                 const fileContent = file ? await file.getContent() : "";
                 const googleProjectName =
@@ -519,10 +513,7 @@ export const configuration = configure(async sdm => {
 
     const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
         container(`Run Smoke Test ${env}`, {
-            callback: async (
-                r: ContainerRegistration,
-                p: GitProject,
-            ) => {
+            callback: async (r: ContainerRegistration, p: GitProject) => {
                 const file = await p.getFile("atomist-build.properties");
                 const fileContent = file ? await file.getContent() : "";
                 const sdmConfiguredSmokeTestBaseUrl =
