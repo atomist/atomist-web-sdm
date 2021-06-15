@@ -434,7 +434,7 @@ export const configuration = configure(async sdm => {
                 const file = await p.getFile("atomist-build.properties");
                 const fileContent = file ? await file.getContent() : "";
                 const googleProjectName =
-                    getValueFromPropertiesFile(fileContent, `google-project-name`) || "atomist-new-web-app";
+                    getValueFromPropertiesFile(fileContent, "google-project-name") || "atomist-new-web-app";
                 return {
                     containers: [
                         {
@@ -522,39 +522,55 @@ export const configuration = configure(async sdm => {
 
     const [runSmokeTestStaging, runSmokeTestProduction] = ["staging", "production"].map(env =>
         container(`Run Smoke Test ${env}`, {
-            containers: [
-                {
-                    env: [
+            callback: async function smokeTestCallback(
+                r: ContainerRegistration,
+                p: GitProject,
+                g: Container,
+                e: SdmGoalEvent,
+                c: RepoContext,
+            ): Promise<GoalContainerSpec> {
+                const file = await p.getFile("atomist-build.properties");
+                const fileContent = file ? await file.getContent() : "";
+                const sdmConfiguredSmokeTestBaseUrl =
+                    env === "production"
+                        ? sdm.configuration.sdm.webapp.urls.prod
+                        : sdm.configuration.sdm.webapp.urls.staging;
+                const propertyKey = `smoke-test-base-url-${env}`;
+                const smokeTestBaseUrl =
+                    getValueFromPropertiesFile(fileContent, propertyKey) || sdmConfiguredSmokeTestBaseUrl;
+                return {
+                    containers: [
                         {
-                            name: "CYPRESS_SMOKE_TEST_BASE_URL",
-                            value: `https://${
-                                env === "production"
-                                    ? sdm.configuration.sdm.webapp.urls.prod
-                                    : sdm.configuration.sdm.webapp.urls.staging
-                            }`,
+                            env: [
+                                {
+                                    name: "CYPRESS_SMOKE_TEST_BASE_URL",
+                                    value: smokeTestBaseUrl,
+                                },
+                            ],
+                            image: "cypress/included:6.1.0",
+                            name: "cypress-included",
+                            resources: {
+                                limits: {
+                                    cpu: "2000m",
+                                    memory: "3072Mi",
+                                },
+                                requests: {
+                                    cpu: "1000m",
+                                    memory: "3072Mi",
+                                },
+                            },
+                            securityContext: {
+                                allowPrivilegeEscalation: false,
+                                privileged: false,
+                                runAsGroup: 1000,
+                                runAsNonRoot: true,
+                                runAsUser: 1000,
+                            },
                         },
                     ],
-                    image: "cypress/included:6.1.0",
-                    name: "cypress-included",
-                    resources: {
-                        limits: {
-                            cpu: "2000m",
-                            memory: "3072Mi",
-                        },
-                        requests: {
-                            cpu: "1000m",
-                            memory: "3072Mi",
-                        },
-                    },
-                    securityContext: {
-                        allowPrivilegeEscalation: false,
-                        privileged: false,
-                        runAsGroup: 1000,
-                        runAsNonRoot: true,
-                        runAsUser: 1000,
-                    },
-                },
-            ],
+                };
+            },
+            containers: [],
             initContainers: [
                 {
                     args: ['chown -Rh 1000:1000 "$ATOMIST_PROJECT_DIR"'],
